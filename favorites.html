@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Favorites - Pixel Arcade</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="site-header">
+        <div class="container">
+            <div class="logo">
+                <span class="logo-pixel">█</span>
+                <h1><a href="games.html" style="color: inherit; text-decoration: none;">PIXEL ARCADE</a></h1>
+            </div>
+            <nav class="main-nav">
+                <div id="userSection">
+                    <button id="loginModalBtn" class="pixel-btn">LOGIN</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Favorites Section -->
+    <section class="games-page">
+        <div class="container">
+            <h1 class="page-title">
+                <span class="title-bracket">[</span>
+                MY FAVORITES
+                <span class="title-bracket">]</span>
+            </h1>
+            
+            <p class="page-subtitle" id="favoritesSubtitle">Your favorite games will appear here</p>
+
+            <div class="games-grid" id="favoritesGrid">
+                <!-- Favorites will be loaded here by JavaScript -->
+                <div class="empty-favorites" id="emptyMessage">
+                    <div class="empty-icon">★</div>
+                    <h3>No favorites yet!</h3>
+                    <p>Browse games and click the star icon to add them to your favorites.</p>
+                    <button class="pixel-btn primary" onclick="window.location.href='games.html'">BROWSE GAMES</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Modal -->
+    <div id="aboutModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>ABOUT PIXEL ARCADE</h2>
+                <span class="close" data-modal="aboutModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Welcome to Pixel Arcade - your destination for free browser-based games!</p>
+                <p>We're building a collection of classic arcade games reimagined for the modern web. All games are free to play, no downloads required.</p>
+                <p>Create an account to save your high scores, track your progress, and compete with players around the world.</p>
+                <p>Our mission is simple: bring back the joy of classic arcade gaming, accessible to everyone, anywhere.</p>
+                <p style="margin-top: 20px; color: var(--neon-magenta);">More games coming soon. Stay tuned!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Modal -->
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>CONTACT US</h2>
+                <span class="close" data-modal="contactModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Have questions, suggestions, or want to submit a game?</p>
+                <p style="margin-top: 30px;">
+                    <strong style="color: var(--neon-cyan);">EMAIL:</strong><br>
+                    <a href="mailto:plymouthtaxibookings@gmail.com" style="color: var(--neon-magenta); font-size: 20px; text-decoration: none;">
+                        plymouthtaxibookings@gmail.com
+                    </a>
+                </p>
+                <p style="margin-top: 30px; font-size: 16px; color: var(--neon-cyan);">We typically respond within 24-48 hours.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy Modal -->
+    <div id="privacyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>PRIVACY POLICY</h2>
+                <span class="close" data-modal="privacyModal">&times;</span>
+            </div>
+            <div class="modal-body privacy-content">
+                <p><strong>Last Updated: January 29, 2026</strong></p>
+                
+                <h3>Information We Collect</h3>
+                <p>We collect minimal information to provide our services:</p>
+                <ul>
+                    <li>Email address (for account creation)</li>
+                    <li>Game progress and high scores</li>
+                    <li>Basic usage data (pages visited, games played)</li>
+                </ul>
+
+                <h3>How We Use Your Information</h3>
+                <p>Your information is used solely to:</p>
+                <ul>
+                    <li>Manage your account and authentication</li>
+                    <li>Save your game progress and scores</li>
+                    <li>Improve our games and user experience</li>
+                </ul>
+
+                <h3>Data Security</h3>
+                <p>We use Firebase Authentication to securely store your credentials. Your password is encrypted and never stored in plain text.</p>
+
+                <h3>Third-Party Services</h3>
+                <p>We use Google Firebase for authentication and data storage. Firebase's privacy policy applies to data they process.</p>
+
+                <h3>Cookies</h3>
+                <p>We use essential cookies to maintain your login session. No tracking or advertising cookies are used.</p>
+
+                <h3>Your Rights</h3>
+                <p>You can delete your account at any time by contacting us. This will permanently remove all your data.</p>
+
+                <h3>Children's Privacy</h3>
+                <p>Our service is not directed to children under 13. We do not knowingly collect data from children.</p>
+
+                <h3>Changes to This Policy</h3>
+                <p>We may update this policy occasionally. Continued use of the site constitutes acceptance of any changes.</p>
+
+                <h3>Contact</h3>
+                <p>Questions about privacy? Email us at plymouthtaxibookings@gmail.com</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 Pixel Arcade | Free Games Forever</p>
+            <div class="footer-links">
+                <a href="games.html">Games</a>
+                <a href="favorites.html">Favorites</a>
+                <a href="#" id="aboutLink">About</a>
+                <a href="#" id="contactLink">Contact</a>
+                <a href="#" id="privacyLink">Privacy</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Firebase SDKs -->
+    <script type="module" src="favorites.js"></script>
+</body>
+</html>

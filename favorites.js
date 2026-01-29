@@ -24,7 +24,7 @@ import {
     getFirestore, 
     doc, 
     getDoc,
-    setDoc 
+    deleteDoc
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 const app = initializeApp(firebaseConfig);
@@ -35,7 +35,9 @@ const db = getFirestore(app);
 // DOM ELEMENTS
 // ============================================
 const userSection = document.getElementById('userSection');
-const loginModalBtn = document.getElementById('loginModalBtn');
+const favoritesGrid = document.getElementById('favoritesGrid');
+const emptyMessage = document.getElementById('emptyMessage');
+const favoritesSubtitle = document.getElementById('favoritesSubtitle');
 
 // ============================================
 // AUTHENTICATION FUNCTIONS
@@ -43,8 +45,93 @@ const loginModalBtn = document.getElementById('loginModalBtn');
 async function handleLogout() {
     try {
         await signOut(auth);
+        window.location.href = 'index.html';
     } catch (error) {
         console.error('Logout error:', error);
+    }
+}
+
+// ============================================
+// FAVORITES FUNCTIONS
+// ============================================
+async function loadFavorites(userId) {
+    try {
+        const favoritesRef = doc(db, 'favorites', userId);
+        const favoritesSnap = await getDoc(favoritesRef);
+        
+        if (favoritesSnap.exists()) {
+            const favorites = favoritesSnap.data().games || [];
+            
+            if (favorites.length === 0) {
+                showEmptyState();
+            } else {
+                displayFavorites(favorites);
+            }
+        } else {
+            showEmptyState();
+        }
+    } catch (error) {
+        console.error('Error loading favorites:', error);
+        showEmptyState();
+    }
+}
+
+function showEmptyState() {
+    favoritesGrid.innerHTML = `
+        <div class="empty-favorites">
+            <div class="empty-icon">★</div>
+            <h3>No favorites yet!</h3>
+            <p>Browse games and click the star icon to add them to your favorites.</p>
+            <button class="pixel-btn primary" onclick="window.location.href='games.html'">BROWSE GAMES</button>
+        </div>
+    `;
+    favoritesSubtitle.textContent = 'Your favorite games will appear here';
+}
+
+function displayFavorites(favorites) {
+    favoritesSubtitle.textContent = `You have ${favorites.length} favorite game${favorites.length !== 1 ? 's' : ''}`;
+    
+    favoritesGrid.innerHTML = favorites.map(game => `
+        <div class="game-card" data-game-id="${game.id}">
+            <div class="game-thumbnail">
+                <div class="coming-soon">COMING SOON</div>
+            </div>
+            <div class="game-info">
+                <h3>${game.title}</h3>
+                <p class="game-category">${game.category}</p>
+                <p class="game-description">${game.description || ''}</p>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <button class="pixel-btn small" onclick="alert('Game coming soon!')">PLAY</button>
+                <button class="favorite-btn active" onclick="removeFavorite('${game.id}')">★</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+window.removeFavorite = async function(gameId) {
+    const user = auth.currentUser;
+    if (!user) return;
+    
+    try {
+        // Get current favorites
+        const favoritesRef = doc(db, 'favorites', user.uid);
+        const favoritesSnap = await getDoc(favoritesRef);
+        
+        if (favoritesSnap.exists()) {
+            const currentFavorites = favoritesSnap.data().games || [];
+            const updatedFavorites = currentFavorites.filter(game => game.id !== gameId);
+            
+            // Update Firestore
+            const { setDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+            await setDoc(favoritesRef, { games: updatedFavorites });
+            
+            // Reload favorites
+            loadFavorites(user.uid);
+        }
+    } catch (error) {
+        console.error('Error removing favorite:', error);
+        alert('Failed to remove favorite. Please try again.');
     }
 }
 
@@ -66,88 +153,11 @@ function updateUIForUser(user) {
         // Add logout listener
         document.getElementById('logoutBtn').addEventListener('click', handleLogout);
         
-        // Load user's favorites to highlight them
-        loadUserFavorites(user.uid);
+        // Load favorites
+        loadFavorites(user.uid);
     } else {
         // User is logged out - redirect to home for login
-        userSection.innerHTML = `
-            <button class="pixel-btn" onclick="window.location.href='index.html'">LOGIN</button>
-        `;
-    }
-}
-
-// ============================================
-// FAVORITES FUNCTIONS
-// ============================================
-async function loadUserFavorites(userId) {
-    try {
-        const favoritesRef = doc(db, 'favorites', userId);
-        const favoritesSnap = await getDoc(favoritesRef);
-        
-        if (favoritesSnap.exists()) {
-            const favorites = favoritesSnap.data().games || [];
-            const favoriteIds = favorites.map(game => game.id);
-            
-            // Highlight favorite buttons
-            document.querySelectorAll('.favorite-btn').forEach(btn => {
-                const gameCard = btn.closest('.game-card');
-                const gameId = gameCard.getAttribute('data-game-id');
-                
-                if (favoriteIds.includes(gameId)) {
-                    btn.classList.add('active');
-                }
-            });
-        }
-    } catch (error) {
-        console.error('Error loading favorites:', error);
-    }
-}
-
-async function toggleFavorite(gameId, title, category, description) {
-    const user = auth.currentUser;
-    if (!user) {
-        alert('Please log in to add favorites!');
-        return;
-    }
-    
-    try {
-        const favoritesRef = doc(db, 'favorites', user.uid);
-        const favoritesSnap = await getDoc(favoritesRef);
-        
-        let favorites = [];
-        if (favoritesSnap.exists()) {
-            favorites = favoritesSnap.data().games || [];
-        }
-        
-        // Check if already favorited
-        const existingIndex = favorites.findIndex(game => game.id === gameId);
-        
-        if (existingIndex > -1) {
-            // Remove from favorites
-            favorites.splice(existingIndex, 1);
-        } else {
-            // Add to favorites
-            favorites.push({
-                id: gameId,
-                title: title,
-                category: category,
-                description: description,
-                addedAt: new Date().toISOString()
-            });
-        }
-        
-        // Save to Firestore
-        await setDoc(favoritesRef, { games: favorites });
-        
-        // Update button state
-        const btn = document.querySelector(`[data-game-id="${gameId}"] .favorite-btn`);
-        if (btn) {
-            btn.classList.toggle('active');
-        }
-        
-    } catch (error) {
-        console.error('Error toggling favorite:', error);
-        alert('Failed to update favorites. Please try again.');
+        window.location.href = 'index.html';
     }
 }
 
@@ -156,12 +166,6 @@ async function toggleFavorite(gameId, title, category, description) {
 // ============================================
 onAuthStateChanged(auth, (user) => {
     updateUIForUser(user);
-    
-    if (user) {
-        console.log('User logged in:', user.email);
-    } else {
-        console.log('User logged out');
-    }
 });
 
 // ============================================
@@ -212,18 +216,5 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target.classList.contains('modal')) {
             e.target.style.display = 'none';
         }
-    });
-    
-    // Favorite buttons
-    document.querySelectorAll('.favorite-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const gameCard = this.closest('.game-card');
-            const gameId = gameCard.getAttribute('data-game-id');
-            const title = this.getAttribute('data-game-title');
-            const category = this.getAttribute('data-game-category');
-            const description = this.getAttribute('data-game-desc');
-            
-            toggleFavorite(gameId, title, category, description);
-        });
     });
 });

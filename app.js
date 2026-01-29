@@ -235,7 +235,10 @@ onAuthStateChanged(auth, (user) => {
     
     if (user) {
         console.log('User logged in:', user.email);
-        // Here you can load user-specific data, game progress, etc.
+        // Redirect to games page if on homepage and logged in
+        if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/') {
+            window.location.href = 'games.html';
+        }
     } else {
         console.log('User logged out');
     }

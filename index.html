@@ -170,42 +170,73 @@
                 </div>
             </div>
             <div class="hero-graphic">
-                <svg class="pixel-fighter-jet" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Jet body -->
-                    <rect x="90" y="80" width="20" height="60" fill="var(--neon-cyan)"/>
+                <svg class="pixel-fighter-jet" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Main fuselage body (gray metallic) -->
+                    <ellipse cx="150" cy="100" rx="60" ry="18" fill="#8A9BA8"/>
+                    <ellipse cx="150" cy="100" rx="55" ry="15" fill="#B0BEC5"/>
                     
-                    <!-- Cockpit -->
-                    <rect x="95" y="85" width="10" height="15" fill="var(--neon-yellow)"/>
+                    <!-- Nose cone -->
+                    <path d="M 90 100 Q 70 100 70 100 Q 70 95 90 95 Z" fill="#5D6D7E"/>
+                    <path d="M 90 100 Q 70 100 70 100 Q 70 105 90 105 Z" fill="#34495E"/>
+                    <circle cx="72" cy="100" r="3" fill="#2C3E50"/>
                     
-                    <!-- Wings -->
-                    <rect x="60" y="100" width="80" height="15" fill="var(--neon-magenta)"/>
-                    <rect x="65" y="95" width="70" height="5" fill="var(--neon-cyan)"/>
-                    <rect x="65" y="115" width="70" height="5" fill="var(--neon-cyan)"/>
+                    <!-- Cockpit canopy -->
+                    <ellipse cx="130" cy="94" rx="15" ry="10" fill="#FFD700" opacity="0.7"/>
+                    <ellipse cx="130" cy="94" rx="12" ry="8" fill="#FFA500" opacity="0.5"/>
                     
-                    <!-- Tail fins -->
-                    <rect x="85" y="140" width="10" height="20" fill="var(--neon-magenta)"/>
-                    <rect x="105" y="140" width="10" height="20" fill="var(--neon-magenta)"/>
+                    <!-- Main wings (spread wide) -->
+                    <ellipse cx="150" cy="100" rx="100" ry="25" fill="#C41E3A"/>
+                    <ellipse cx="150" cy="100" rx="95" ry="22" fill="#E63946"/>
                     
-                    <!-- Nose -->
-                    <rect x="95" y="75" width="10" height="5" fill="var(--neon-yellow)"/>
-                    <rect x="98" y="70" width="4" height="5" fill="var(--neon-yellow)"/>
+                    <!-- Wing details/stripes -->
+                    <rect x="80" y="95" width="20" height="10" fill="#ffffff" opacity="0.8"/>
+                    <rect x="200" y="95" width="20" height="10" fill="#ffffff" opacity="0.8"/>
+                    <circle cx="90" cy="100" r="8" fill="#1E3A8A" opacity="0.9"/>
+                    <circle cx="210" cy="100" r="8" fill="#1E3A8A" opacity="0.9"/>
+                    <circle cx="90" cy="100" r="5" fill="#ffffff"/>
+                    <circle cx="210" cy="100" r="5" fill="#ffffff"/>
+                    
+                    <!-- Engine nacelles under wings -->
+                    <ellipse cx="100" cy="108" rx="8" ry="12" fill="#5D6D7E"/>
+                    <ellipse cx="200" cy="108" rx="8" ry="12" fill="#5D6D7E"/>
+                    <circle cx="100" cy="115" r="5" fill="#2C3E50"/>
+                    <circle cx="200" cy="115" r="5" fill="#2C3E50"/>
+                    
+                    <!-- Tail section -->
+                    <path d="M 210 100 L 230 100 L 230 95 L 215 95 Z" fill="#8A9BA8"/>
+                    <path d="M 210 100 L 230 100 L 230 105 L 215 105 Z" fill="#5D6D7E"/>
+                    
+                    <!-- Vertical stabilizer -->
+                    <path d="M 225 100 L 235 85 L 240 85 L 230 100 Z" fill="#C41E3A"/>
+                    <path d="M 225 100 L 230 100 L 240 85 L 235 85 Z" fill="#E63946"/>
+                    
+                    <!-- Horizontal stabilizers -->
+                    <ellipse cx="228" cy="100" rx="20" ry="6" fill="#E63946"/>
+                    
+                    <!-- Propeller spinner -->
+                    <circle cx="70" cy="100" r="6" fill="#FFD700"/>
+                    <circle cx="70" cy="100" r="4" fill="#FFA500"/>
+                    
+                    <!-- Propeller blades (animated) -->
+                    <g class="propeller">
+                        <rect x="68" y="85" width="4" height="30" rx="2" fill="#34495E" opacity="0.6"/>
+                        <rect x="55" y="98" width="30" height="4" rx="2" fill="#34495E" opacity="0.6"/>
+                    </g>
                     
                     <!-- Exhaust flames -->
                     <g class="exhaust">
-                        <rect x="88" y="160" width="4" height="10" fill="var(--neon-yellow)"/>
-                        <rect x="92" y="165" width="4" height="8" fill="var(--neon-magenta)"/>
-                        <rect x="96" y="160" width="4" height="10" fill="var(--neon-yellow)"/>
-                        <rect x="104" y="165" width="4" height="8" fill="var(--neon-magenta)"/>
-                        <rect x="108" y="160" width="4" height="10" fill="var(--neon-yellow)"/>
+                        <ellipse cx="245" cy="100" rx="8" ry="3" fill="#FFD700" opacity="0.8"/>
+                        <ellipse cx="248" cy="100" rx="6" ry="2" fill="#FFA500" opacity="0.7"/>
+                        <ellipse cx="251" cy="100" rx="4" ry="1.5" fill="#FF6B6B" opacity="0.6"/>
                     </g>
                     
-                    <!-- Weapon pods -->
-                    <rect x="55" y="105" width="8" height="8" fill="var(--neon-yellow)"/>
-                    <rect x="137" y="105" width="8" height="8" fill="var(--neon-yellow)"/>
+                    <!-- Fuselage highlights -->
+                    <ellipse cx="150" cy="97" rx="50" ry="3" fill="#ECEFF1" opacity="0.4"/>
                     
-                    <!-- Details -->
-                    <rect x="92" y="110" width="16" height="3" fill="var(--dark-bg)"/>
-                    <rect x="92" y="120" width="16" height="3" fill="var(--dark-bg)"/>
+                    <!-- Panel lines -->
+                    <line x1="110" y1="95" x2="110" y2="105" stroke="#5D6D7E" stroke-width="0.5" opacity="0.5"/>
+                    <line x1="170" y1="95" x2="170" y2="105" stroke="#5D6D7E" stroke-width="0.5" opacity="0.5"/>
+                    <line x1="190" y1="95" x2="190" y2="105" stroke="#5D6D7E" stroke-width="0.5" opacity="0.5"/>
                 </svg>
             </div>
         </div>

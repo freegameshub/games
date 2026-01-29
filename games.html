@@ -39,7 +39,7 @@
             <div class="games-grid">
                 <!-- Game Card Template - Duplicate and modify for each game -->
                 
-                <div class="game-card">
+                <div class="game-card" data-game-id="space-invaders">
                     <div class="game-thumbnail">
                         <div class="coming-soon">COMING SOON</div>
                     </div>
@@ -48,10 +48,13 @@
                         <p class="game-category">SHOOTER</p>
                         <p class="game-description">Classic arcade shooter. Defend Earth from alien invaders!</p>
                     </div>
-                    <button class="pixel-btn small" onclick="alert('Game coming soon!')">PLAY</button>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <button class="pixel-btn small" onclick="alert('Game coming soon!')">PLAY</button>
+                        <button class="favorite-btn" data-game-title="Space Invaders" data-game-category="SHOOTER" data-game-desc="Classic arcade shooter. Defend Earth from alien invaders!">★</button>
+                    </div>
                 </div>
 
-                <div class="game-card">
+                <div class="game-card" data-game-id="tetris">
                     <div class="game-thumbnail">
                         <div class="coming-soon">COMING SOON</div>
                     </div>
@@ -60,10 +63,13 @@
                         <p class="game-category">PUZZLE</p>
                         <p class="game-description">Stack blocks and clear lines in this addictive puzzle game.</p>
                     </div>
-                    <button class="pixel-btn small" onclick="alert('Game coming soon!')">PLAY</button>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <button class="pixel-btn small" onclick="alert('Game coming soon!')">PLAY</button>
+                        <button class="favorite-btn" data-game-title="Tetris Remix" data-game-category="PUZZLE" data-game-desc="Stack blocks and clear lines in this addictive puzzle game.">★</button>
+                    </div>
                 </div>
 
-                <div class="game-card">
+                <div class="game-card" data-game-id="snake">
                     <div class="game-thumbnail">
                         <div class="coming-soon">COMING SOON</div>
                     </div>
@@ -72,10 +78,13 @@
                         <p class="game-category">ARCADE</p>
                         <p class="game-description">Eat, grow, and don't crash into yourself!</p>
                     </div>
-                    <button class="pixel-btn small" onclick="alert('Game coming soon!')">PLAY</button>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <button class="pixel-btn small" onclick="alert('Game coming soon!')">PLAY</button>
+                        <button class="favorite-btn" data-game-title="Snake Runner" data-game-category="ARCADE" data-game-desc="Eat, grow, and don't crash into yourself!">★</button>
+                    </div>
                 </div>
 
-                <div class="game-card">
+                <div class="game-card" data-game-id="pong">
                     <div class="game-thumbnail">
                         <div class="coming-soon">COMING SOON</div>
                     </div>
@@ -84,10 +93,13 @@
                         <p class="game-category">SPORTS</p>
                         <p class="game-description">The original video game. Can you beat the AI?</p>
                     </div>
-                    <button class="pixel-btn small" onclick="alert('Game coming soon!')">PLAY</button>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <button class="pixel-btn small" onclick="alert('Game coming soon!')">PLAY</button>
+                        <button class="favorite-btn" data-game-title="Pong Battle" data-game-category="SPORTS" data-game-desc="The original video game. Can you beat the AI?">★</button>
+                    </div>
                 </div>
 
-                <div class="game-card">
+                <div class="game-card" data-game-id="breakout">
                     <div class="game-thumbnail">
                         <div class="coming-soon">COMING SOON</div>
                     </div>
@@ -96,10 +108,13 @@
                         <p class="game-category">ARCADE</p>
                         <p class="game-description">Break all the bricks with your bouncing ball.</p>
                     </div>
-                    <button class="pixel-btn small" onclick="alert('Game coming soon!')">PLAY</button>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <button class="pixel-btn small" onclick="alert('Game coming soon!')">PLAY</button>
+                        <button class="favorite-btn" data-game-title="Breakout" data-game-category="ARCADE" data-game-desc="Break all the bricks with your bouncing ball.">★</button>
+                    </div>
                 </div>
 
-                <div class="game-card">
+                <div class="game-card" data-game-id="pacman">
                     <div class="game-thumbnail">
                         <div class="coming-soon">COMING SOON</div>
                     </div>
@@ -108,7 +123,10 @@
                         <p class="game-category">MAZE</p>
                         <p class="game-description">Eat dots, avoid ghosts, get the high score!</p>
                     </div>
-                    <button class="pixel-btn small" onclick="alert('Game coming soon!')">PLAY</button>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <button class="pixel-btn small" onclick="alert('Game coming soon!')">PLAY</button>
+                        <button class="favorite-btn" data-game-title="Pac-Man Clone" data-game-category="MAZE" data-game-desc="Eat dots, avoid ghosts, get the high score!">★</button>
+                    </div>
                 </div>
 
             </div>
@@ -215,6 +233,7 @@
             <div class="footer-links">
                 <a href="index.html">Home</a>
                 <a href="games.html">Games</a>
+                <a href="favorites.html">Favorites</a>
                 <a href="#" id="aboutLink">About</a>
                 <a href="#" id="contactLink">Contact</a>
                 <a href="#" id="privacyLink">Privacy</a>
