@@ -10,6 +10,93 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- About Modal -->
+    <div id="aboutModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>ABOUT PIXEL ARCADE</h2>
+                <span class="close" data-modal="aboutModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Welcome to Pixel Arcade - your destination for free browser-based games!</p>
+                <p>We're building a collection of classic arcade games reimagined for the modern web. All games are free to play, no downloads required.</p>
+                <p>Create an account to save your high scores, track your progress, and compete with players around the world.</p>
+                <p>Our mission is simple: bring back the joy of classic arcade gaming, accessible to everyone, anywhere.</p>
+                <p style="margin-top: 20px; color: var(--neon-magenta);">More games coming soon. Stay tuned!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Modal -->
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>CONTACT US</h2>
+                <span class="close" data-modal="contactModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Have questions, suggestions, or want to submit a game?</p>
+                <p style="margin-top: 30px;">
+                    <strong style="color: var(--neon-cyan);">EMAIL:</strong><br>
+                    <a href="mailto:plymouthtaxibookings@gmail.com" style="color: var(--neon-magenta); font-size: 20px; text-decoration: none;">
+                        plymouthtaxibookings@gmail.com
+                    </a>
+                </p>
+                <p style="margin-top: 30px; font-size: 16px; color: var(--neon-cyan);">We typically respond within 24-48 hours.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy Modal -->
+    <div id="privacyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>PRIVACY POLICY</h2>
+                <span class="close" data-modal="privacyModal">&times;</span>
+            </div>
+            <div class="modal-body privacy-content">
+                <p><strong>Last Updated: January 29, 2026</strong></p>
+                
+                <h3>Information We Collect</h3>
+                <p>We collect minimal information to provide our services:</p>
+                <ul>
+                    <li>Email address (for account creation)</li>
+                    <li>Game progress and high scores</li>
+                    <li>Basic usage data (pages visited, games played)</li>
+                </ul>
+
+                <h3>How We Use Your Information</h3>
+                <p>Your information is used solely to:</p>
+                <ul>
+                    <li>Manage your account and authentication</li>
+                    <li>Save your game progress and scores</li>
+                    <li>Improve our games and user experience</li>
+                </ul>
+
+                <h3>Data Security</h3>
+                <p>We use Firebase Authentication to securely store your credentials. Your password is encrypted and never stored in plain text.</p>
+
+                <h3>Third-Party Services</h3>
+                <p>We use Google Firebase for authentication and data storage. Firebase's privacy policy applies to data they process.</p>
+
+                <h3>Cookies</h3>
+                <p>We use essential cookies to maintain your login session. No tracking or advertising cookies are used.</p>
+
+                <h3>Your Rights</h3>
+                <p>You can delete your account at any time by contacting us. This will permanently remove all your data.</p>
+
+                <h3>Children's Privacy</h3>
+                <p>Our service is not directed to children under 13. We do not knowingly collect data from children.</p>
+
+                <h3>Changes to This Policy</h3>
+                <p>We may update this policy occasionally. Continued use of the site constitutes acceptance of any changes.</p>
+
+                <h3>Contact</h3>
+                <p>Questions about privacy? Email us at plymouthtaxibookings@gmail.com</p>
+            </div>
+        </div>
+    </div>
+
     <!-- Auth Modal -->
     <div id="authModal" class="modal">
         <div class="modal-content">
@@ -78,70 +165,48 @@
                 <h2 class="glitch" data-text="PLAY FREE GAMES">PLAY FREE GAMES</h2>
                 <p class="hero-subtitle">Classic arcade action, browser-based fun</p>
                 <div class="cta-buttons">
-                    <button class="pixel-btn large primary">START PLAYING</button>
-                    <button class="pixel-btn large secondary">VIEW COLLECTION</button>
+                    <button id="startPlayingBtn" class="pixel-btn large primary">START PLAYING</button>
+                    <button class="pixel-btn large secondary" onclick="window.location.href='games.html'">VIEW GAMES</button>
                 </div>
             </div>
             <div class="hero-graphic">
-                <div class="pixel-art-space"></div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Games Grid -->
-    <section class="games-section">
-        <div class="container">
-            <h2 class="section-title">
-                <span class="title-bracket">[</span>
-                GAME COLLECTION
-                <span class="title-bracket">]</span>
-            </h2>
-            
-            <div class="games-grid" id="gamesGrid">
-                <!-- Sample game cards - you'll add your actual games here -->
-                <div class="game-card">
-                    <div class="game-thumbnail">
-                        <div class="coming-soon">COMING SOON</div>
-                    </div>
-                    <div class="game-info">
-                        <h3>Space Invaders Clone</h3>
-                        <p class="game-category">SHOOTER</p>
-                    </div>
-                    <button class="pixel-btn small">PLAY</button>
-                </div>
-
-                <div class="game-card">
-                    <div class="game-thumbnail">
-                        <div class="coming-soon">COMING SOON</div>
-                    </div>
-                    <div class="game-info">
-                        <h3>Tetris Remix</h3>
-                        <p class="game-category">PUZZLE</p>
-                    </div>
-                    <button class="pixel-btn small">PLAY</button>
-                </div>
-
-                <div class="game-card">
-                    <div class="game-thumbnail">
-                        <div class="coming-soon">COMING SOON</div>
-                    </div>
-                    <div class="game-info">
-                        <h3>Snake Runner</h3>
-                        <p class="game-category">ARCADE</p>
-                    </div>
-                    <button class="pixel-btn small">PLAY</button>
-                </div>
-
-                <div class="game-card">
-                    <div class="game-thumbnail">
-                        <div class="coming-soon">COMING SOON</div>
-                    </div>
-                    <div class="game-info">
-                        <h3>Pong Battle</h3>
-                        <p class="game-category">SPORTS</p>
-                    </div>
-                    <button class="pixel-btn small">PLAY</button>
-                </div>
+                <svg class="pixel-fighter-jet" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Jet body -->
+                    <rect x="90" y="80" width="20" height="60" fill="var(--neon-cyan)"/>
+                    
+                    <!-- Cockpit -->
+                    <rect x="95" y="85" width="10" height="15" fill="var(--neon-yellow)"/>
+                    
+                    <!-- Wings -->
+                    <rect x="60" y="100" width="80" height="15" fill="var(--neon-magenta)"/>
+                    <rect x="65" y="95" width="70" height="5" fill="var(--neon-cyan)"/>
+                    <rect x="65" y="115" width="70" height="5" fill="var(--neon-cyan)"/>
+                    
+                    <!-- Tail fins -->
+                    <rect x="85" y="140" width="10" height="20" fill="var(--neon-magenta)"/>
+                    <rect x="105" y="140" width="10" height="20" fill="var(--neon-magenta)"/>
+                    
+                    <!-- Nose -->
+                    <rect x="95" y="75" width="10" height="5" fill="var(--neon-yellow)"/>
+                    <rect x="98" y="70" width="4" height="5" fill="var(--neon-yellow)"/>
+                    
+                    <!-- Exhaust flames -->
+                    <g class="exhaust">
+                        <rect x="88" y="160" width="4" height="10" fill="var(--neon-yellow)"/>
+                        <rect x="92" y="165" width="4" height="8" fill="var(--neon-magenta)"/>
+                        <rect x="96" y="160" width="4" height="10" fill="var(--neon-yellow)"/>
+                        <rect x="104" y="165" width="4" height="8" fill="var(--neon-magenta)"/>
+                        <rect x="108" y="160" width="4" height="10" fill="var(--neon-yellow)"/>
+                    </g>
+                    
+                    <!-- Weapon pods -->
+                    <rect x="55" y="105" width="8" height="8" fill="var(--neon-yellow)"/>
+                    <rect x="137" y="105" width="8" height="8" fill="var(--neon-yellow)"/>
+                    
+                    <!-- Details -->
+                    <rect x="92" y="110" width="16" height="3" fill="var(--dark-bg)"/>
+                    <rect x="92" y="120" width="16" height="3" fill="var(--dark-bg)"/>
+                </svg>
             </div>
         </div>
     </section>
@@ -151,9 +216,10 @@
         <div class="container">
             <p>&copy; 2026 Pixel Arcade | Free Games Forever</p>
             <div class="footer-links">
-                <a href="#about">About</a>
-                <a href="#contact">Contact</a>
-                <a href="#privacy">Privacy</a>
+                <a href="games.html">Games</a>
+                <a href="#" id="aboutLink">About</a>
+                <a href="#" id="contactLink">Contact</a>
+                <a href="#" id="privacyLink">Privacy</a>
             </div>
         </div>
     </footer>

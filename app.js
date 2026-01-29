@@ -1,14 +1,14 @@
 // ============================================
 // FIREBASE CONFIGURATION
 // ============================================
-// Replace these values with your Firebase config from Firebase Console
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
+    apiKey: "AIzaSyDsCNv0gZ3zvGuyrkb5vdzuMKPqjpb_NE0",
+    authDomain: "free-games-hub.firebaseapp.com",
+    projectId: "free-games-hub",
+    storageBucket: "free-games-hub.firebasestorage.app",
+    messagingSenderId: "935587086734",
+    appId: "1:935587086734:web:ba7c1d19c4a32f18c124df",
+    measurementId: "G-422WG76L3B"
 };
 
 // ============================================
@@ -256,10 +256,51 @@ showLoginLink.addEventListener('click', (e) => {
     showLogin();
 });
 
+// About, Contact, Privacy modals
+const aboutLink = document.getElementById('aboutLink');
+const contactLink = document.getElementById('contactLink');
+const privacyLink = document.getElementById('privacyLink');
+const aboutModal = document.getElementById('aboutModal');
+const contactModal = document.getElementById('contactModal');
+const privacyModal = document.getElementById('privacyModal');
+
+if (aboutLink) {
+    aboutLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        aboutModal.style.display = 'block';
+    });
+}
+
+if (contactLink) {
+    contactLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        contactModal.style.display = 'block';
+    });
+}
+
+if (privacyLink) {
+    privacyLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        privacyModal.style.display = 'block';
+    });
+}
+
+// Close buttons for all modals
+document.querySelectorAll('.close').forEach(closeBtn => {
+    closeBtn.addEventListener('click', function() {
+        const modalId = this.getAttribute('data-modal');
+        if (modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        } else {
+            closeModal(); // For auth modal
+        }
+    });
+});
+
 // Close modal when clicking outside
 window.addEventListener('click', (e) => {
-    if (e.target === modal) {
-        closeModal();
+    if (e.target.classList.contains('modal')) {
+        e.target.style.display = 'none';
     }
 });
 
@@ -282,12 +323,12 @@ signupPasswordConfirm.addEventListener('keypress', (e) => {
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Pixel Arcade loaded!');
     
-    // Example: Add click handlers to game cards
-    const gameCards = document.querySelectorAll('.game-card');
-    gameCards.forEach(card => {
-        const playBtn = card.querySelector('.pixel-btn');
-        playBtn.addEventListener('click', () => {
-            alert('Game coming soon! Start building your games and add them here.');
+    // START PLAYING button opens signup modal
+    const startPlayingBtn = document.getElementById('startPlayingBtn');
+    if (startPlayingBtn) {
+        startPlayingBtn.addEventListener('click', () => {
+            openModal();
+            showSignup(); // Show signup form by default
         });
-    });
+    }
 });
