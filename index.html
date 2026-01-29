@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixel Arcade - Free Games Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Auth Modal -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">PLAYER LOGIN</h2>
+                <span class="close">&times;</span>
+            </div>
+            
+            <div id="loginForm" class="auth-form">
+                <div class="pixel-input-group">
+                    <label>EMAIL</label>
+                    <input type="email" id="loginEmail" placeholder="player@arcade.com">
+                </div>
+                <div class="pixel-input-group">
+                    <label>PASSWORD</label>
+                    <input type="password" id="loginPassword" placeholder="••••••••">
+                </div>
+                <button id="loginBtn" class="pixel-btn primary">LOGIN</button>
+                <p class="switch-auth">
+                    New player? <a href="#" id="showSignup">CREATE ACCOUNT</a>
+                </p>
+            </div>
+
+            <div id="signupForm" class="auth-form" style="display: none;">
+                <div class="pixel-input-group">
+                    <label>EMAIL</label>
+                    <input type="email" id="signupEmail" placeholder="player@arcade.com">
+                </div>
+                <div class="pixel-input-group">
+                    <label>PASSWORD</label>
+                    <input type="password" id="signupPassword" placeholder="••••••••">
+                </div>
+                <div class="pixel-input-group">
+                    <label>CONFIRM PASSWORD</label>
+                    <input type="password" id="signupPasswordConfirm" placeholder="••••••••">
+                </div>
+                <button id="signupBtn" class="pixel-btn primary">CREATE ACCOUNT</button>
+                <p class="switch-auth">
+                    Already have an account? <a href="#" id="showLogin">LOGIN</a>
+                </p>
+            </div>
+
+            <div id="authError" class="error-message"></div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="site-header">
+        <div class="container">
+            <div class="logo">
+                <span class="logo-pixel">█</span>
+                <h1>PIXEL ARCADE</h1>
+            </div>
+            <nav class="main-nav">
+                <div id="userSection">
+                    <button id="loginModalBtn" class="pixel-btn">LOGIN</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h2 class="glitch" data-text="PLAY FREE GAMES">PLAY FREE GAMES</h2>
+                <p class="hero-subtitle">Classic arcade action, browser-based fun</p>
+                <div class="cta-buttons">
+                    <button class="pixel-btn large primary">START PLAYING</button>
+                    <button class="pixel-btn large secondary">VIEW COLLECTION</button>
+                </div>
+            </div>
+            <div class="hero-graphic">
+                <div class="pixel-art-space"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Games Grid -->
+    <section class="games-section">
+        <div class="container">
+            <h2 class="section-title">
+                <span class="title-bracket">[</span>
+                GAME COLLECTION
+                <span class="title-bracket">]</span>
+            </h2>
+            
+            <div class="games-grid" id="gamesGrid">
+                <!-- Sample game cards - you'll add your actual games here -->
+                <div class="game-card">
+                    <div class="game-thumbnail">
+                        <div class="coming-soon">COMING SOON</div>
+                    </div>
+                    <div class="game-info">
+                        <h3>Space Invaders Clone</h3>
+                        <p class="game-category">SHOOTER</p>
+                    </div>
+                    <button class="pixel-btn small">PLAY</button>
+                </div>
+
+                <div class="game-card">
+                    <div class="game-thumbnail">
+                        <div class="coming-soon">COMING SOON</div>
+                    </div>
+                    <div class="game-info">
+                        <h3>Tetris Remix</h3>
+                        <p class="game-category">PUZZLE</p>
+                    </div>
+                    <button class="pixel-btn small">PLAY</button>
+                </div>
+
+                <div class="game-card">
+                    <div class="game-thumbnail">
+                        <div class="coming-soon">COMING SOON</div>
+                    </div>
+                    <div class="game-info">
+                        <h3>Snake Runner</h3>
+                        <p class="game-category">ARCADE</p>
+                    </div>
+                    <button class="pixel-btn small">PLAY</button>
+                </div>
+
+                <div class="game-card">
+                    <div class="game-thumbnail">
+                        <div class="coming-soon">COMING SOON</div>
+                    </div>
+                    <div class="game-info">
+                        <h3>Pong Battle</h3>
+                        <p class="game-category">SPORTS</p>
+                    </div>
+                    <button class="pixel-btn small">PLAY</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 Pixel Arcade | Free Games Forever</p>
+            <div class="footer-links">
+                <a href="#about">About</a>
+                <a href="#contact">Contact</a>
+                <a href="#privacy">Privacy</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Firebase SDKs -->
+    <script type="module" src="app.js"></script>
+</body>
+</html>
