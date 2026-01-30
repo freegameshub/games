@@ -42,6 +42,13 @@ const db = getFirestore(app);
 let currentGame = 'space-invaders';
 let currentUser = null;
 
+// Check URL for game parameter
+const urlParams = new URLSearchParams(window.location.search);
+const gameParam = urlParams.get('game');
+if (gameParam) {
+    currentGame = gameParam;
+}
+
 // ============================================
 // DOM ELEMENTS
 // ============================================
@@ -395,6 +402,11 @@ function updateWeekInfo() {
 }
 
 updateWeekInfo();
+
+// Set game selector to match URL parameter
+if (gameParam && gameSelect) {
+    gameSelect.value = gameParam;
+}
 
 // ============================================
 // MODAL EVENT LISTENERS

@@ -43,6 +43,7 @@ const loginModalBtn = document.getElementById('loginModalBtn');
 async function handleLogout() {
     try {
         await signOut(auth);
+        window.location.href = 'index.html';
     } catch (error) {
         console.error('Logout error:', error);
     }

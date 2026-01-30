@@ -840,6 +840,18 @@ body {
     margin-bottom: 8px;
 }
 
+.game-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.game-actions .pixel-btn {
+    flex: 1;
+    min-width: 70px;
+}
+
 .game-category {
     font-size: 18px;
     color: var(--neon-magenta);
