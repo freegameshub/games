@@ -680,11 +680,11 @@ body {
     }
 }
 
-.pixel-fighter-jet {
+.fighter-jet-img {
     width: 100%;
-    max-width: 500px;
+    max-width: 600px;
     height: auto;
-    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.3));
+    filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.4));
     animation: jetFloat 3s ease-in-out infinite;
 }
 
@@ -693,32 +693,14 @@ body {
         transform: translateY(0px) translateX(0px) rotate(-2deg);
     }
     25% { 
-        transform: translateY(-15px) translateX(5px) rotate(-1deg);
+        transform: translateY(-20px) translateX(8px) rotate(-1deg);
     }
     50% { 
-        transform: translateY(0px) translateX(10px) rotate(0deg);
+        transform: translateY(0px) translateX(15px) rotate(0deg);
     }
     75% { 
-        transform: translateY(-10px) translateX(5px) rotate(-1deg);
+        transform: translateY(-15px) translateX(8px) rotate(-1deg);
     }
-}
-
-.propeller {
-    animation: propellerSpin 0.08s linear infinite;
-}
-
-@keyframes propellerSpin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
-.exhaust {
-    animation: exhaustFlicker 0.12s infinite alternate;
-}
-
-@keyframes exhaustFlicker {
-    from { opacity: 1; transform: scaleX(1); }
-    to { opacity: 0.6; transform: scaleX(1.3); }
 }
 
 /* Games Section */
@@ -826,6 +808,32 @@ body {
     color: var(--neon-yellow);
     text-shadow: 0 0 10px var(--neon-yellow);
     animation: blink 1.5s infinite;
+}
+
+.play-ready {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Press Start 2P', cursive;
+    font-size: 16px;
+    color: var(--pixel-green);
+    text-shadow: 0 0 15px var(--pixel-green);
+    background: rgba(0, 255, 65, 0.1);
+    padding: 15px 25px;
+    border: 2px solid var(--pixel-green);
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { 
+        transform: translate(-50%, -50%) scale(1);
+        box-shadow: 0 0 10px var(--pixel-green);
+    }
+    50% { 
+        transform: translate(-50%, -50%) scale(1.05);
+        box-shadow: 0 0 25px var(--pixel-green);
+    }
 }
 
 @keyframes blink {
