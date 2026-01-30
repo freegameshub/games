@@ -210,6 +210,13 @@
             <div class="high-score">HIGH: <span id="highScore">0</span></div>
         </div>
 
+        <div id="gameOver" class="game-over">
+            <h2>GAME OVER!</h2>
+            <p>FINAL SCORE:</p>
+            <div class="final-score" id="finalScore">0</div>
+            <p id="scoreMessage"></p>
+        </div>
+
         <div class="canvas-wrapper">
             <canvas id="gameCanvas" width="600" height="600"></canvas>
             <div id="pauseOverlay" class="pause-overlay">PAUSED</div>
@@ -228,13 +235,6 @@
             <button id="pauseBtn" class="secondary" style="display: none;">PAUSE</button>
             <button class="secondary" onclick="window.location.href='games.html'">BACK TO GAMES</button>
             <button class="secondary" onclick="window.location.href='leaderboard.html?game=snake'">LEADERBOARDS</button>
-        </div>
-
-        <div id="gameOver" class="game-over">
-            <h2>GAME OVER!</h2>
-            <p>FINAL SCORE:</p>
-            <div class="final-score" id="finalScore">0</div>
-            <p id="scoreMessage"></p>
         </div>
     </div>
 

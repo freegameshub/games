@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Invaders - Pixel Arcade</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'VT323', monospace;
+            background: #0a0a0a;
+            color: #00ffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 255, 255, 0.03) 2px, rgba(0, 255, 255, 0.03) 4px);
+        }
+        .game-container {
+            text-align: center;
+            background: rgba(26, 26, 26, 0.9);
+            padding: 30px;
+            border: 3px solid #00ffff;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+            max-width: 650px;
+            width: 95%;
+        }
+        h1 { font-family: 'Press Start 2P', cursive; font-size: 24px; color: #ffff00; margin-bottom: 10px; text-shadow: 0 0 20px #ffff00; }
+        .game-info { display: flex; justify-content: space-between; margin: 20px 0; font-size: 20px; }
+        .score, .lives { color: #ff00ff; }
+        .score span, .lives span { color: #00ffff; font-weight: bold; font-size: 24px; }
+        canvas { border: 3px solid #ff00ff; background: #000; display: block; margin: 20px auto; box-shadow: 0 0 20px rgba(255, 0, 255, 0.3); }
+        .controls { font-size: 18px; color: #00ffff; margin: 20px 0; }
+        .controls span { color: #ffff00; font-family: 'Press Start 2P', cursive; font-size: 12px; }
+        .buttons { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+        button { font-family: 'Press Start 2P', cursive; font-size: 12px; padding: 12px 24px; border: 3px solid #00ffff; background: #00ffff; color: #0a0a0a; cursor: pointer; transition: all 0.3s ease; }
+        button:hover { background: #ff00ff; border-color: #ff00ff; transform: translateY(-2px); }
+        button.secondary { background: transparent; color: #00ffff; }
+        .game-over { display: none; background: rgba(255, 0, 255, 0.1); border: 3px solid #ff00ff; padding: 30px; margin: 20px 0; }
+        .game-over.show { display: block; animation: fadeIn 0.5s; }
+        .game-over h2 { font-family: 'Press Start 2P', cursive; font-size: 24px; color: #ff00ff; margin-bottom: 15px; }
+        .final-score { font-size: 32px; color: #ffff00; text-shadow: 0 0 20px #ffff00; margin: 15px 0; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .start-message { font-size: 20px; color: #ffff00; animation: blink 1.5s infinite; margin: 20px 0; }
+        @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0.3; } }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>👾 SPACE INVADERS 👾</h1>
+        <div class="game-info">
+            <div class="score">SCORE: <span id="score">0</span></div>
+            <div class="lives">LIVES: <span id="lives">3</span></div>
+        </div>
+        <div id="gameOver" class="game-over">
+            <h2>GAME OVER!</h2>
+            <p>FINAL SCORE:</p>
+            <div class="final-score" id="finalScore">0</div>
+            <p id="scoreMessage"></p>
+        </div>
+        <canvas id="gameCanvas" width="600" height="600"></canvas>
+        <div id="startMessage" class="start-message">PRESS SPACE OR CLICK START TO BEGIN</div>
+        <div class="controls"><span>← →</span> or <span>A D</span> to move | <span>SPACE</span> to shoot</div>
+        <div class="buttons">
+            <button id="startBtn">START GAME</button>
+            <button class="secondary" onclick="window.location.href='games.html'">BACK TO GAMES</button>
+            <button class="secondary" onclick="window.location.href='leaderboard.html?game=space-invaders'">LEADERBOARDS</button>
+        </div>
+    </div>
+    <script type="module">
+        import './game-score-helper.js';
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreEl = document.getElementById('score');
+        const livesEl = document.getElementById('lives');
+        const gameOverEl = document.getElementById('gameOver');
+        const finalScoreEl = document.getElementById('finalScore');
+        const scoreMessageEl = document.getElementById('scoreMessage');
+        const startMessageEl = document.getElementById('startMessage');
+        
+        let player = {x: 280, y: 550, width: 40, height: 30, speed: 5};
+        let bullets = [];
+        let aliens = [];
+        let alienBullets = [];
+        let score = 0;
+        let lives = 3;
+        let gameRunning = false;
+        let keys = {};
+        
+        function init() {
+            player = {x: 280, y: 550, width: 40, height: 30, speed: 5};
+            bullets = []; alienBullets = []; score = 0; lives = 3;
+            scoreEl.textContent = score; livesEl.textContent = lives;
+            gameOverEl.classList.remove('show'); startMessageEl.style.display = 'none';
+            createAliens(); gameRunning = true; gameLoop();
+        }
+        
+        function createAliens() {
+            aliens = [];
+            for (let row = 0; row < 4; row++) {
+                for (let col = 0; col < 8; col++) {
+                    aliens.push({x: 80 + col * 60, y: 80 + row * 50, width: 40, height: 30, alive: true});
+                }
+            }
+        }
+        
+        function gameLoop() {
+            if (!gameRunning) return;
+            update(); draw();
+            requestAnimationFrame(gameLoop);
+        }
+        
+        function update() {
+            if (keys['ArrowLeft'] || keys['a']) player.x = Math.max(0, player.x - player.speed);
+            if (keys['ArrowRight'] || keys['d']) player.x = Math.min(canvas.width - player.width, player.x + player.speed);
+            
+            bullets.forEach((b, i) => {
+                b.y -= 8;
+                if (b.y < 0) bullets.splice(i, 1);
+            });
+            
+            alienBullets.forEach((b, i) => {
+                b.y += 5;
+                if (b.y > canvas.height) alienBullets.splice(i, 1);
+                if (b.x > player.x && b.x < player.x + player.width && b.y > player.y && b.y < player.y + player.height) {
+                    lives--; livesEl.textContent = lives; alienBullets.splice(i, 1);
+                    if (lives <= 0) endGame();
+                }
+            });
+            
+            bullets.forEach((b, bi) => {
+                aliens.forEach((a, ai) => {
+                    if (a.alive && b.x > a.x && b.x < a.x + a.width && b.y > a.y && b.y < a.y + a.height) {
+                        a.alive = false; bullets.splice(bi, 1);
+                        score += 10; scoreEl.textContent = score;
+                    }
+                });
+            });
+            
+            if (Math.random() < 0.02 && aliens.some(a => a.alive)) {
+                const aliveAliens = aliens.filter(a => a.alive);
+                const shooter = aliveAliens[Math.floor(Math.random() * aliveAliens.length)];
+                alienBullets.push({x: shooter.x + 20, y: shooter.y + 30});
+            }
+            
+            if (!aliens.some(a => a.alive)) createAliens();
+        }
+        
+        function draw() {
+            ctx.fillStyle = '#000'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#00ffff'; ctx.shadowColor = '#00ffff'; ctx.shadowBlur = 10;
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+            ctx.shadowBlur = 0;
+            
+            ctx.fillStyle = '#ffff00';
+            bullets.forEach(b => ctx.fillRect(b.x, b.y, 4, 15));
+            
+            ctx.fillStyle = '#ff00ff';
+            alienBullets.forEach(b => ctx.fillRect(b.x, b.y, 4, 15));
+            
+            ctx.fillStyle = '#ff00ff'; ctx.shadowColor = '#ff00ff'; ctx.shadowBlur = 5;
+            aliens.forEach(a => { if (a.alive) ctx.fillRect(a.x, a.y, a.width, a.height); });
+            ctx.shadowBlur = 0;
+        }
+        
+        async function endGame() {
+            gameRunning = false;
+            finalScoreEl.textContent = score;
+            scoreMessageEl.textContent = score > 100 ? '🏆 GREAT SHOOTING! 🏆' : 'Keep practicing!';
+            gameOverEl.classList.add('show');
+            if (score > 0 && window.PixelArcade) await window.PixelArcade.submitScore('space-invaders', score);
+        }
+        
+        document.addEventListener('keydown', e => {
+            keys[e.key] = true;
+            if (e.code === 'Space') {
+                e.preventDefault();
+                if (!gameRunning) init();
+                else if (gameRunning) bullets.push({x: player.x + 18, y: player.y});
+            }
+        });
+        document.addEventListener('keyup', e => keys[e.key] = false);
+        document.getElementById('startBtn').addEventListener('click', init);
+    </script>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breakout - Pixel Arcade</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'VT323', monospace; background: #0a0a0a; color: #00ffff; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 255, 255, 0.03) 2px, rgba(0, 255, 255, 0.03) 4px); }
+        .game-container { text-align: center; background: rgba(26, 26, 26, 0.9); padding: 30px; border: 3px solid #00ffff; box-shadow: 0 0 30px rgba(0, 255, 255, 0.3); max-width: 650px; width: 95%; }
+        h1 { font-family: 'Press Start 2P', cursive; font-size: 24px; color: #ffff00; margin-bottom: 10px; text-shadow: 0 0 20px #ffff00; }
+        .game-info { display: flex; justify-content: space-between; margin: 20px 0; font-size: 20px; }
+        .score, .lives { color: #ff00ff; }
+        .score span, .lives span { color: #00ffff; font-weight: bold; font-size: 24px; }
+        canvas { border: 3px solid #ff00ff; background: #000; display: block; margin: 20px auto; box-shadow: 0 0 20px rgba(255, 0, 255, 0.3); }
+        .controls { font-size: 18px; color: #00ffff; margin: 20px 0; }
+        .controls span { color: #ffff00; font-family: 'Press Start 2P', cursive; font-size: 12px; }
+        .buttons { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+        button { font-family: 'Press Start 2P', cursive; font-size: 12px; padding: 12px 24px; border: 3px solid #00ffff; background: #00ffff; color: #0a0a0a; cursor: pointer; transition: all 0.3s ease; }
+        button:hover { background: #ff00ff; border-color: #ff00ff; transform: translateY(-2px); }
+        button.secondary { background: transparent; color: #00ffff; }
+        .game-over { display: none; background: rgba(255, 0, 255, 0.1); border: 3px solid #ff00ff; padding: 30px; margin: 20px 0; }
+        .game-over.show { display: block; animation: fadeIn 0.5s; }
+        .game-over h2 { font-family: 'Press Start 2P', cursive; font-size: 24px; color: #ff00ff; margin-bottom: 15px; }
+        .final-score { font-size: 32px; color: #ffff00; text-shadow: 0 0 20px #ffff00; margin: 15px 0; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .start-message { font-size: 20px; color: #ffff00; animation: blink 1.5s infinite; margin: 20px 0; }
+        @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0.3; } }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🧱 BREAKOUT 🧱</h1>
+        <div class="game-info">
+            <div class="score">SCORE: <span id="score">0</span></div>
+            <div class="lives">LIVES: <span id="lives">3</span></div>
+        </div>
+        <div id="gameOver" class="game-over">
+            <h2 id="resultTitle">GAME OVER!</h2>
+            <p>FINAL SCORE:</p>
+            <div class="final-score" id="finalScore">0</div>
+            <p id="scoreMessage"></p>
+        </div>
+        <canvas id="gameCanvas" width="600" height="600"></canvas>
+        <div id="startMessage" class="start-message">PRESS SPACE OR CLICK START TO BEGIN</div>
+        <div class="controls"><span>← →</span> or <span>A D</span> to move paddle</div>
+        <div class="buttons">
+            <button id="startBtn">START GAME</button>
+            <button class="secondary" onclick="window.location.href='games.html'">BACK TO GAMES</button>
+            <button class="secondary" onclick="window.location.href='leaderboard.html?game=breakout'">LEADERBOARDS</button>
+        </div>
+    </div>
+    <script type="module">
+        import './game-score-helper.js';
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreEl = document.getElementById('score');
+        const livesEl = document.getElementById('lives');
+        const gameOverEl = document.getElementById('gameOver');
+        const finalScoreEl = document.getElementById('finalScore');
+        const scoreMessageEl = document.getElementById('scoreMessage');
+        const resultTitleEl = document.getElementById('resultTitle');
+        const startMessageEl = document.getElementById('startMessage');
+        
+        let paddle = {x: 250, y: 560, width: 100, height: 15, speed: 8};
+        let ball = {x: 300, y: 300, radius: 8, dx: 4, dy: -4};
+        let bricks = [];
+        let score = 0, lives = 3, gameRunning = false, keys = {};
+        const brickRowCount = 6, brickColumnCount = 8, brickWidth = 70, brickHeight = 25, brickPadding = 5, brickOffsetTop = 50, brickOffsetLeft = 10;
+        const colors = ['#ff0000', '#ff6600', '#ffff00', '#00ff00', '#00ffff', '#ff00ff'];
+        
+        function init() {
+            score = 0; lives = 3;
+            scoreEl.textContent = score; livesEl.textContent = lives;
+            gameOverEl.classList.remove('show'); startMessageEl.style.display = 'none';
+            createBricks(); resetBall(); gameRunning = true; gameLoop();
+        }
+        
+        function createBricks() {
+            bricks = [];
+            for (let row = 0; row < brickRowCount; row++) {
+                for (let col = 0; col < brickColumnCount; col++) {
+                    bricks.push({
+                        x: col * (brickWidth + brickPadding) + brickOffsetLeft,
+                        y: row * (brickHeight + brickPadding) + brickOffsetTop,
+                        status: 1,
+                        color: colors[row]
+                    });
+                }
+            }
+        }
+        
+        function resetBall() {
+            ball.x = paddle.x + paddle.width / 2;
+            ball.y = paddle.y - 20;
+            ball.dx = (Math.random() - 0.5) * 8;
+            ball.dy = -4;
+        }
+        
+        function gameLoop() {
+            if (!gameRunning) return;
+            update(); draw();
+            requestAnimationFrame(gameLoop);
+        }
+        
+        function update() {
+            if (keys['ArrowLeft'] || keys['a']) paddle.x = Math.max(0, paddle.x - paddle.speed);
+            if (keys['ArrowRight'] || keys['d']) paddle.x = Math.min(canvas.width - paddle.width, paddle.x + paddle.speed);
+            
+            ball.x += ball.dx; ball.y += ball.dy;
+            
+            if (ball.x - ball.radius < 0 || ball.x + ball.radius > canvas.width) ball.dx *= -1;
+            if (ball.y - ball.radius < 0) ball.dy *= -1;
+            
+            if (ball.y + ball.radius > paddle.y && ball.x > paddle.x && ball.x < paddle.x + paddle.width && ball.dy > 0) {
+                ball.dy *= -1;
+                const hitPos = (ball.x - paddle.x) / paddle.width;
+                ball.dx = (hitPos - 0.5) * 10;
+            }
+            
+            if (ball.y > canvas.height) {
+                lives--;
+                livesEl.textContent = lives;
+                if (lives <= 0) endGame(false);
+                else resetBall();
+            }
+            
+            bricks.forEach(brick => {
+                if (brick.status === 1) {
+                    if (ball.x > brick.x && ball.x < brick.x + brickWidth && ball.y > brick.y && ball.y < brick.y + brickHeight) {
+                        ball.dy *= -1;
+                        brick.status = 0;
+                        score += 10;
+                        scoreEl.textContent = score;
+                    }
+                }
+            });
+            
+            if (bricks.every(b => b.status === 0)) endGame(true);
+        }
+        
+        function draw() {
+            ctx.fillStyle = '#000'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#00ffff'; ctx.shadowColor = '#00ffff'; ctx.shadowBlur = 10;
+            ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+            
+            ctx.fillStyle = '#ffff00'; ctx.shadowColor = '#ffff00';
+            ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2); ctx.fill();
+            ctx.shadowBlur = 0;
+            
+            bricks.forEach(brick => {
+                if (brick.status === 1) {
+                    ctx.fillStyle = brick.color;
+                    ctx.fillRect(brick.x, brick.y, brickWidth, brickHeight);
+                }
+            });
+        }
+        
+        async function endGame(won) {
+            gameRunning = false;
+            resultTitleEl.textContent = won ? 'YOU WIN! 🏆' : 'GAME OVER!';
+            finalScoreEl.textContent = score;
+            scoreMessageEl.textContent = won ? 'All bricks cleared!' : 'Try again!';
+            gameOverEl.classList.add('show');
+            if (score > 0 && window.PixelArcade) await window.PixelArcade.submitScore('breakout', score);
+        }
+        
+        document.addEventListener('keydown', e => { keys[e.key] = true; if (e.code === 'Space' && !gameRunning) init(); });
+        document.addEventListener('keyup', e => keys[e.key] = false);
+        document.getElementById('startBtn').addEventListener('click', init);
+    </script>
+</body>
+</html>

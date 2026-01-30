@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tetris Remix - Pixel Arcade</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'VT323', monospace; background: #0a0a0a; color: #00ffff; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 255, 255, 0.03) 2px, rgba(0, 255, 255, 0.03) 4px); }
+        .game-container { text-align: center; background: rgba(26, 26, 26, 0.9); padding: 30px; border: 3px solid #00ffff; box-shadow: 0 0 30px rgba(0, 255, 255, 0.3); max-width: 650px; width: 95%; }
+        h1 { font-family: 'Press Start 2P', cursive; font-size: 24px; color: #ffff00; margin-bottom: 10px; text-shadow: 0 0 20px #ffff00; }
+        .game-info { display: flex; justify-content: space-between; margin: 20px 0; font-size: 20px; }
+        .score, .lines { color: #ff00ff; }
+        .score span, .lines span { color: #00ffff; font-weight: bold; font-size: 24px; }
+        canvas { border: 3px solid #ff00ff; background: #000; display: block; margin: 20px auto; box-shadow: 0 0 20px rgba(255, 0, 255, 0.3); }
+        .controls { font-size: 18px; color: #00ffff; margin: 20px 0; }
+        .controls span { color: #ffff00; font-family: 'Press Start 2P', cursive; font-size: 12px; }
+        .buttons { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+        button { font-family: 'Press Start 2P', cursive; font-size: 12px; padding: 12px 24px; border: 3px solid #00ffff; background: #00ffff; color: #0a0a0a; cursor: pointer; transition: all 0.3s ease; }
+        button:hover { background: #ff00ff; border-color: #ff00ff; transform: translateY(-2px); }
+        button.secondary { background: transparent; color: #00ffff; }
+        .game-over { display: none; background: rgba(255, 0, 255, 0.1); border: 3px solid #ff00ff; padding: 30px; margin: 20px 0; }
+        .game-over.show { display: block; animation: fadeIn 0.5s; }
+        .game-over h2 { font-family: 'Press Start 2P', cursive; font-size: 24px; color: #ff00ff; margin-bottom: 15px; }
+        .final-score { font-size: 32px; color: #ffff00; text-shadow: 0 0 20px #ffff00; margin: 15px 0; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .start-message { font-size: 20px; color: #ffff00; animation: blink 1.5s infinite; margin: 20px 0; }
+        @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0.3; } }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🟦 TETRIS REMIX 🟦</h1>
+        <div class="game-info">
+            <div class="score">SCORE: <span id="score">0</span></div>
+            <div class="lines">LINES: <span id="lines">0</span></div>
+        </div>
+        <div id="gameOver" class="game-over">
+            <h2>GAME OVER!</h2>
+            <p>FINAL SCORE:</p>
+            <div class="final-score" id="finalScore">0</div>
+            <p id="scoreMessage"></p>
+        </div>
+        <canvas id="gameCanvas" width="300" height="600"></canvas>
+        <div id="startMessage" class="start-message">PRESS SPACE OR CLICK START TO BEGIN</div>
+        <div class="controls"><span>← →</span> move | <span>↓</span> drop | <span>↑</span> rotate</div>
+        <div class="buttons">
+            <button id="startBtn">START GAME</button>
+            <button class="secondary" onclick="window.location.href='games.html'">BACK TO GAMES</button>
+            <button class="secondary" onclick="window.location.href='leaderboard.html?game=tetris'">LEADERBOARDS</button>
+        </div>
+    </div>
+    <script type="module">
+        import './game-score-helper.js';
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreEl = document.getElementById('score');
+        const linesEl = document.getElementById('lines');
+        const gameOverEl = document.getElementById('gameOver');
+        const finalScoreEl = document.getElementById('finalScore');
+        const scoreMessageEl = document.getElementById('scoreMessage');
+        const startMessageEl = document.getElementById('startMessage');
+        
+        const COLS = 10, ROWS = 20, BLOCK = 30;
+        const SHAPES = [
+            [[1,1,1,1]], [[1,1],[1,1]], [[1,1,1],[0,1,0]], [[1,1,1],[1,0,0]],
+            [[1,1,1],[0,0,1]], [[1,1,0],[0,1,1]], [[0,1,1],[1,1,0]]
+        ];
+        const COLORS = ['#00ffff','#ffff00','#ff00ff','#ff6600','#0000ff','#00ff00','#ff0000'];
+        
+        let board = [], piece = null, score = 0, lines = 0, gameRunning = false, dropCounter = 0, dropInterval = 1000;
+        
+        function init() {
+            board = Array.from({length: ROWS}, () => Array(COLS).fill(0));
+            score = 0; lines = 0; dropCounter = 0;
+            scoreEl.textContent = score; linesEl.textContent = lines;
+            gameOverEl.classList.remove('show'); startMessageEl.style.display = 'none';
+            spawnPiece(); gameRunning = true; gameLoop();
+        }
+        
+        function spawnPiece() {
+            const shapeIndex = Math.floor(Math.random() * SHAPES.length);
+            piece = {
+                shape: SHAPES[shapeIndex],
+                color: COLORS[shapeIndex],
+                x: Math.floor(COLS/2) - 1,
+                y: 0
+            };
+            if (collision()) endGame();
+        }
+        
+        let lastTime = 0;
+        function gameLoop(time = 0) {
+            if (!gameRunning) return;
+            const deltaTime = time - lastTime;
+            lastTime = time;
+            dropCounter += deltaTime;
+            if (dropCounter > dropInterval) { dropPiece(); dropCounter = 0; }
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+        
+        function dropPiece() {
+            piece.y++;
+            if (collision()) {
+                piece.y--;
+                merge();
+                clearLines();
+                spawnPiece();
+            }
+        }
+        
+        function collision() {
+            for (let y = 0; y < piece.shape.length; y++) {
+                for (let x = 0; x < piece.shape[y].length; x++) {
+                    if (piece.shape[y][x]) {
+                        const newX = piece.x + x;
+                        const newY = piece.y + y;
+                        if (newX < 0 || newX >= COLS || newY >= ROWS || (newY >= 0 && board[newY][newX])) return true;
+                    }
+                }
+            }
+            return false;
+        }
+        
+        function merge() {
+            piece.shape.forEach((row, y) => {
+                row.forEach((val, x) => {
+                    if (val && piece.y + y >= 0) board[piece.y + y][piece.x + x] = piece.color;
+                });
+            });
+        }
+        
+        function clearLines() {
+            let cleared = 0;
+            for (let y = ROWS - 1; y >= 0; y--) {
+                if (board[y].every(cell => cell !== 0)) {
+                    board.splice(y, 1);
+                    board.unshift(Array(COLS).fill(0));
+                    cleared++;
+                    y++;
+                }
+            }
+            if (cleared > 0) {
+                lines += cleared;
+                score += cleared * 100 * cleared;
+                linesEl.textContent = lines;
+                scoreEl.textContent = score;
+            }
+        }
+        
+        function rotate() {
+            const rotated = piece.shape[0].map((_, i) => piece.shape.map(row => row[i]).reverse());
+            const prevShape = piece.shape;
+            piece.shape = rotated;
+            if (collision()) piece.shape = prevShape;
+        }
+        
+        function draw() {
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            board.forEach((row, y) => {
+                row.forEach((val, x) => {
+                    if (val) {
+                        ctx.fillStyle = val;
+                        ctx.fillRect(x * BLOCK, y * BLOCK, BLOCK-1, BLOCK-1);
+                    }
+                });
+            });
+            
+            if (piece) {
+                ctx.fillStyle = piece.color;
+                ctx.shadowColor = piece.color;
+                ctx.shadowBlur = 10;
+                piece.shape.forEach((row, y) => {
+                    row.forEach((val, x) => {
+                        if (val) ctx.fillRect((piece.x + x) * BLOCK, (piece.y + y) * BLOCK, BLOCK-1, BLOCK-1);
+                    });
+                });
+                ctx.shadowBlur = 0;
+            }
+        }
+        
+        async function endGame() {
+            gameRunning = false;
+            finalScoreEl.textContent = score;
+            scoreMessageEl.textContent = score > 500 ? '🏆 TETRIS MASTER! 🏆' : 'Keep stacking!';
+            gameOverEl.classList.add('show');
+            if (score > 0 && window.PixelArcade) await window.PixelArcade.submitScore('tetris', score);
+        }
+        
+        document.addEventListener('keydown', e => {
+            if (!gameRunning) { if (e.code === 'Space') init(); return; }
+            if (e.key === 'ArrowLeft') { piece.x--; if (collision()) piece.x++; }
+            else if (e.key === 'ArrowRight') { piece.x++; if (collision()) piece.x--; }
+            else if (e.key === 'ArrowDown') dropPiece();
+            else if (e.key === 'ArrowUp') rotate();
+        });
+        document.getElementById('startBtn').addEventListener('click', init);
+    </script>
+</body>
+</html>

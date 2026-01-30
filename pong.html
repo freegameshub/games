@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pong Battle - Pixel Arcade</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'VT323', monospace; background: #0a0a0a; color: #00ffff; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 255, 255, 0.03) 2px, rgba(0, 255, 255, 0.03) 4px); }
+        .game-container { text-align: center; background: rgba(26, 26, 26, 0.9); padding: 30px; border: 3px solid #00ffff; box-shadow: 0 0 30px rgba(0, 255, 255, 0.3); max-width: 650px; width: 95%; }
+        h1 { font-family: 'Press Start 2P', cursive; font-size: 24px; color: #ffff00; margin-bottom: 10px; text-shadow: 0 0 20px #ffff00; }
+        .game-info { display: flex; justify-content: space-around; margin: 20px 0; font-size: 20px; }
+        .player, .ai { color: #ff00ff; }
+        .player span, .ai span { color: #00ffff; font-weight: bold; font-size: 32px; }
+        canvas { border: 3px solid #ff00ff; background: #000; display: block; margin: 20px auto; box-shadow: 0 0 20px rgba(255, 0, 255, 0.3); }
+        .controls { font-size: 18px; color: #00ffff; margin: 20px 0; }
+        .controls span { color: #ffff00; font-family: 'Press Start 2P', cursive; font-size: 12px; }
+        .buttons { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+        button { font-family: 'Press Start 2P', cursive; font-size: 12px; padding: 12px 24px; border: 3px solid #00ffff; background: #00ffff; color: #0a0a0a; cursor: pointer; transition: all 0.3s ease; }
+        button:hover { background: #ff00ff; border-color: #ff00ff; transform: translateY(-2px); }
+        button.secondary { background: transparent; color: #00ffff; }
+        .game-over { display: none; background: rgba(255, 0, 255, 0.1); border: 3px solid #ff00ff; padding: 30px; margin: 20px 0; }
+        .game-over.show { display: block; animation: fadeIn 0.5s; }
+        .game-over h2 { font-family: 'Press Start 2P', cursive; font-size: 24px; color: #ff00ff; margin-bottom: 15px; }
+        .final-score { font-size: 32px; color: #ffff00; text-shadow: 0 0 20px #ffff00; margin: 15px 0; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .start-message { font-size: 20px; color: #ffff00; animation: blink 1.5s infinite; margin: 20px 0; }
+        @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0.3; } }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🏓 PONG BATTLE 🏓</h1>
+        <div class="game-info">
+            <div class="player">YOU: <span id="playerScore">0</span></div>
+            <div class="ai">AI: <span id="aiScore">0</span></div>
+        </div>
+        <div id="gameOver" class="game-over">
+            <h2 id="resultTitle">GAME OVER!</h2>
+            <p>YOUR SCORE:</p>
+            <div class="final-score" id="finalScore">0</div>
+            <p id="scoreMessage"></p>
+        </div>
+        <canvas id="gameCanvas" width="600" height="400"></canvas>
+        <div id="startMessage" class="start-message">PRESS SPACE OR CLICK START TO BEGIN</div>
+        <div class="controls"><span>↑ ↓</span> or <span>W S</span> to move | First to 5 wins!</div>
+        <div class="buttons">
+            <button id="startBtn">START GAME</button>
+            <button class="secondary" onclick="window.location.href='games.html'">BACK TO GAMES</button>
+            <button class="secondary" onclick="window.location.href='leaderboard.html?game=pong'">LEADERBOARDS</button>
+        </div>
+    </div>
+    <script type="module">
+        import './game-score-helper.js';
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const playerScoreEl = document.getElementById('playerScore');
+        const aiScoreEl = document.getElementById('aiScore');
+        const gameOverEl = document.getElementById('gameOver');
+        const finalScoreEl = document.getElementById('finalScore');
+        const scoreMessageEl = document.getElementById('scoreMessage');
+        const resultTitleEl = document.getElementById('resultTitle');
+        const startMessageEl = document.getElementById('startMessage');
+        
+        let playerPaddle = {x: 20, y: 150, width: 15, height: 100, speed: 6};
+        let aiPaddle = {x: 565, y: 150, width: 15, height: 100, speed: 4};
+        let ball = {x: 300, y: 200, radius: 8, dx: 4, dy: 4};
+        let playerScore = 0, aiScore = 0, gameRunning = false, keys = {};
+        
+        function init() {
+            playerScore = 0; aiScore = 0;
+            playerScoreEl.textContent = playerScore; aiScoreEl.textContent = aiScore;
+            gameOverEl.classList.remove('show'); startMessageEl.style.display = 'none';
+            resetBall(); gameRunning = true; gameLoop();
+        }
+        
+        function resetBall() {
+            ball.x = 300; ball.y = 200;
+            ball.dx = (Math.random() > 0.5 ? 1 : -1) * 4;
+            ball.dy = (Math.random() - 0.5) * 6;
+        }
+        
+        function gameLoop() {
+            if (!gameRunning) return;
+            update(); draw();
+            requestAnimationFrame(gameLoop);
+        }
+        
+        function update() {
+            if (keys['ArrowUp'] || keys['w']) playerPaddle.y = Math.max(0, playerPaddle.y - playerPaddle.speed);
+            if (keys['ArrowDown'] || keys['s']) playerPaddle.y = Math.min(canvas.height - playerPaddle.height, playerPaddle.y + playerPaddle.speed);
+            
+            if (ball.y < aiPaddle.y + aiPaddle.height/2) aiPaddle.y = Math.max(0, aiPaddle.y - aiPaddle.speed);
+            else if (ball.y > aiPaddle.y + aiPaddle.height/2) aiPaddle.y = Math.min(canvas.height - aiPaddle.height, aiPaddle.y + aiPaddle.speed);
+            
+            ball.x += ball.dx; ball.y += ball.dy;
+            
+            if (ball.y - ball.radius < 0 || ball.y + ball.radius > canvas.height) ball.dy *= -1;
+            
+            if (ball.x - ball.radius < playerPaddle.x + playerPaddle.width && ball.y > playerPaddle.y && ball.y < playerPaddle.y + playerPaddle.height) {
+                ball.dx = Math.abs(ball.dx);
+                ball.dy += (ball.y - (playerPaddle.y + playerPaddle.height/2)) * 0.1;
+            }
+            
+            if (ball.x + ball.radius > aiPaddle.x && ball.y > aiPaddle.y && ball.y < aiPaddle.y + aiPaddle.height) {
+                ball.dx = -Math.abs(ball.dx);
+                ball.dy += (ball.y - (aiPaddle.y + aiPaddle.height/2)) * 0.1;
+            }
+            
+            if (ball.x < 0) { aiScore++; aiScoreEl.textContent = aiScore; resetBall(); if (aiScore >= 5) endGame(false); }
+            if (ball.x > canvas.width) { playerScore++; playerScoreEl.textContent = playerScore; resetBall(); if (playerScore >= 5) endGame(true); }
+        }
+        
+        function draw() {
+            ctx.fillStyle = '#000'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.strokeStyle = 'rgba(0, 255, 255, 0.3)'; ctx.setLineDash([10, 10]);
+            ctx.beginPath(); ctx.moveTo(canvas.width/2, 0); ctx.lineTo(canvas.width/2, canvas.height); ctx.stroke(); ctx.setLineDash([]);
+            
+            ctx.fillStyle = '#00ffff'; ctx.shadowColor = '#00ffff'; ctx.shadowBlur = 10;
+            ctx.fillRect(playerPaddle.x, playerPaddle.y, playerPaddle.width, playerPaddle.height);
+            
+            ctx.fillStyle = '#ff00ff'; ctx.shadowColor = '#ff00ff';
+            ctx.fillRect(aiPaddle.x, aiPaddle.y, aiPaddle.width, aiPaddle.height);
+            
+            ctx.fillStyle = '#ffff00'; ctx.shadowColor = '#ffff00';
+            ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2); ctx.fill();
+            ctx.shadowBlur = 0;
+        }
+        
+        async function endGame(won) {
+            gameRunning = false;
+            resultTitleEl.textContent = won ? 'YOU WIN! 🏆' : 'AI WINS!';
+            finalScoreEl.textContent = playerScore;
+            scoreMessageEl.textContent = won ? 'Great job!' : 'Better luck next time!';
+            gameOverEl.classList.add('show');
+            if (playerScore > 0 && window.PixelArcade) await window.PixelArcade.submitScore('pong', playerScore);
+        }
+        
+        document.addEventListener('keydown', e => { keys[e.key] = true; if (e.code === 'Space' && !gameRunning) init(); });
+        document.addEventListener('keyup', e => keys[e.key] = false);
+        document.getElementById('startBtn').addEventListener('click', init);
+    </script>
+</body>
+</html>
