@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboards - Pixel Arcade</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="site-header">
+        <div class="container">
+            <div class="logo">
+                <span class="logo-pixel">█</span>
+                <h1><a href="games.html" style="color: inherit; text-decoration: none;">PIXEL ARCADE</a></h1>
+            </div>
+            <nav class="main-nav">
+                <div id="userSection">
+                    <button id="loginModalBtn" class="pixel-btn">LOGIN</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Leaderboard Section -->
+    <section class="leaderboard-page">
+        <div class="container">
+            <h1 class="page-title">
+                <span class="title-bracket">[</span>
+                LEADERBOARDS
+                <span class="title-bracket">]</span>
+            </h1>
+            
+            <p class="page-subtitle">Compete for the top spot!</p>
+
+            <!-- Game Selection -->
+            <div class="game-selector">
+                <label for="gameSelect">SELECT GAME:</label>
+                <select id="gameSelect" class="pixel-select">
+                    <option value="space-invaders">Space Invaders</option>
+                    <option value="tetris">Tetris Remix</option>
+                    <option value="snake">Snake Runner</option>
+                    <option value="pong">Pong Battle</option>
+                    <option value="breakout">Breakout</option>
+                    <option value="pacman">Pac-Man Clone</option>
+                </select>
+            </div>
+
+            <!-- Leaderboard Tabs -->
+            <div class="leaderboard-tabs">
+                <button class="tab-btn active" data-tab="global">🌍 GLOBAL</button>
+                <button class="tab-btn" data-tab="weekly">📅 WEEKLY</button>
+                <button class="tab-btn" data-tab="personal">👤 PERSONAL BEST</button>
+            </div>
+
+            <!-- Leaderboard Content -->
+            <div class="leaderboard-content">
+                <!-- Global Tab -->
+                <div id="global-tab" class="tab-content active">
+                    <div class="leaderboard-header">
+                        <h2>TOP 100 ALL-TIME</h2>
+                    </div>
+                    <div class="leaderboard-table">
+                        <div class="table-header">
+                            <span class="rank-col">RANK</span>
+                            <span class="player-col">PLAYER</span>
+                            <span class="score-col">SCORE</span>
+                            <span class="date-col">DATE</span>
+                        </div>
+                        <div id="globalLeaderboard" class="table-body">
+                            <div class="loading">LOADING SCORES...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Weekly Tab -->
+                <div id="weekly-tab" class="tab-content">
+                    <div class="leaderboard-header">
+                        <h2>TOP 100 THIS WEEK</h2>
+                        <p class="week-info" id="weekInfo">Week of Jan 27 - Feb 2, 2026</p>
+                    </div>
+                    <div class="leaderboard-table">
+                        <div class="table-header">
+                            <span class="rank-col">RANK</span>
+                            <span class="player-col">PLAYER</span>
+                            <span class="score-col">SCORE</span>
+                            <span class="date-col">DATE</span>
+                        </div>
+                        <div id="weeklyLeaderboard" class="table-body">
+                            <div class="loading">LOADING SCORES...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personal Tab -->
+                <div id="personal-tab" class="tab-content">
+                    <div class="leaderboard-header">
+                        <h2>YOUR BEST SCORES</h2>
+                    </div>
+                    <div id="personalStats" class="personal-stats">
+                        <!-- Personal stats will be loaded here -->
+                    </div>
+                    <div class="leaderboard-table">
+                        <div class="table-header">
+                            <span class="rank-col">RANK</span>
+                            <span class="score-col-wide">SCORE</span>
+                            <span class="date-col">DATE</span>
+                        </div>
+                        <div id="personalLeaderboard" class="table-body">
+                            <div class="loading">LOGIN TO VIEW YOUR SCORES</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Score Section (for testing) -->
+            <div class="submit-score-section" id="submitScoreSection">
+                <h3>TEST: Submit a Score</h3>
+                <p>Use this to test the leaderboard system (remove this section in production)</p>
+                <div class="submit-form">
+                    <input type="number" id="testScore" placeholder="Enter score" class="pixel-input">
+                    <button id="submitScoreBtn" class="pixel-btn primary">SUBMIT SCORE</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Modal -->
+    <div id="aboutModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>ABOUT PIXEL ARCADE</h2>
+                <span class="close" data-modal="aboutModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Welcome to Pixel Arcade - your destination for free browser-based games!</p>
+                <p>We're building a collection of classic arcade games reimagined for the modern web. All games are free to play, no downloads required.</p>
+                <p>Create an account to save your high scores, track your progress, and compete with players around the world.</p>
+                <p>Our mission is simple: bring back the joy of classic arcade gaming, accessible to everyone, anywhere.</p>
+                <p style="margin-top: 20px; color: var(--neon-magenta);">More games coming soon. Stay tuned!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Modal -->
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>CONTACT US</h2>
+                <span class="close" data-modal="contactModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Have questions, suggestions, or want to submit a game?</p>
+                <p style="margin-top: 30px;">
+                    <strong style="color: var(--neon-cyan);">EMAIL:</strong><br>
+                    <a href="mailto:plymouthtaxibookings@gmail.com" style="color: var(--neon-magenta); font-size: 20px; text-decoration: none;">
+                        plymouthtaxibookings@gmail.com
+                    </a>
+                </p>
+                <p style="margin-top: 30px; font-size: 16px; color: var(--neon-cyan);">We typically respond within 24-48 hours.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy Modal -->
+    <div id="privacyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>PRIVACY POLICY</h2>
+                <span class="close" data-modal="privacyModal">&times;</span>
+            </div>
+            <div class="modal-body privacy-content">
+                <p><strong>Last Updated: January 29, 2026</strong></p>
+                
+                <h3>Information We Collect</h3>
+                <p>We collect minimal information to provide our services:</p>
+                <ul>
+                    <li>Email address (for account creation)</li>
+                    <li>Game progress and high scores</li>
+                    <li>Basic usage data (pages visited, games played)</li>
+                </ul>
+
+                <h3>How We Use Your Information</h3>
+                <p>Your information is used solely to:</p>
+                <ul>
+                    <li>Manage your account and authentication</li>
+                    <li>Save your game progress and scores</li>
+                    <li>Improve our games and user experience</li>
+                </ul>
+
+                <h3>Data Security</h3>
+                <p>We use Firebase Authentication to securely store your credentials. Your password is encrypted and never stored in plain text.</p>
+
+                <h3>Third-Party Services</h3>
+                <p>We use Google Firebase for authentication and data storage. Firebase's privacy policy applies to data they process.</p>
+
+                <h3>Cookies</h3>
+                <p>We use essential cookies to maintain your login session. No tracking or advertising cookies are used.</p>
+
+                <h3>Your Rights</h3>
+                <p>You can delete your account at any time by contacting us. This will permanently remove all your data.</p>
+
+                <h3>Children's Privacy</h3>
+                <p>Our service is not directed to children under 13. We do not knowingly collect data from children.</p>
+
+                <h3>Changes to This Policy</h3>
+                <p>We may update this policy occasionally. Continued use of the site constitutes acceptance of any changes.</p>
+
+                <h3>Contact</h3>
+                <p>Questions about privacy? Email us at plymouthtaxibookings@gmail.com</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 Pixel Arcade | Free Games Forever</p>
+            <div class="footer-links">
+                <a href="games.html">Games</a>
+                <a href="favorites.html">Favorites</a>
+                <a href="leaderboard.html">Leaderboards</a>
+                <a href="#" id="aboutLink">About</a>
+                <a href="#" id="contactLink">Contact</a>
+                <a href="#" id="privacyLink">Privacy</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Firebase SDKs -->
+    <script type="module" src="leaderboard.js"></script>
+</body>
+</html>
