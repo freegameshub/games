@@ -199,6 +199,39 @@
             canvas { width: 100%; height: auto; }
             button { font-size: 10px; padding: 10px 20px; }
         }
+
+        /* Mobile Touch Controls */
+        .mobile-controls {
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-width: 300px;
+            margin: 20px auto;
+        }
+
+        .mobile-controls button {
+            padding: 20px;
+            font-size: 24px;
+            background: rgba(0, 255, 255, 0.2);
+            border: 2px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+        }
+
+        .mobile-controls button:active {
+            background: rgba(0, 255, 255, 0.4);
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.5);
+        }
+
+        .mobile-controls .up { grid-column: 2; }
+        .mobile-controls .left { grid-column: 1; grid-row: 2; }
+        .mobile-controls .right { grid-column: 3; grid-row: 2; }
+        .mobile-controls .down { grid-column: 2; grid-row: 2; }
+
+        @media (max-width: 768px) {
+            .mobile-controls { display: grid; }
+        }
     </style>
 </head>
 <body>
@@ -228,6 +261,14 @@
 
         <div class="controls">
             <span>ARROW KEYS</span> or <span>WASD</span> to move | <span>SPACE</span> to pause
+        </div>
+
+        <!-- Mobile Touch Controls -->
+        <div class="mobile-controls">
+            <button class="up" id="btnUp">▲</button>
+            <button class="left" id="btnLeft">◄</button>
+            <button class="down" id="btnDown">▼</button>
+            <button class="right" id="btnRight">►</button>
         </div>
 
         <div class="buttons">
@@ -466,6 +507,17 @@
         // Button controls
         startBtn.addEventListener('click', init);
         pauseBtn.addEventListener('click', togglePause);
+
+        // Mobile touch controls
+        const btnUp = document.getElementById('btnUp');
+        const btnDown = document.getElementById('btnDown');
+        const btnLeft = document.getElementById('btnLeft');
+        const btnRight = document.getElementById('btnRight');
+
+        if (btnUp) btnUp.addEventListener('click', () => { if (dy === 0 && gameRunning && !gamePaused) { dx = 0; dy = -1; } });
+        if (btnDown) btnDown.addEventListener('click', () => { if (dy === 0 && gameRunning && !gamePaused) { dx = 0; dy = 1; } });
+        if (btnLeft) btnLeft.addEventListener('click', () => { if (dx === 0 && gameRunning && !gamePaused) { dx = -1; dy = 0; } });
+        if (btnRight) btnRight.addEventListener('click', () => { if (dx === 0 && gameRunning && !gamePaused) { dx = 1; dy = 0; } });
 
         // Draw initial state
         draw();

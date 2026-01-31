@@ -1224,7 +1224,21 @@ body {
 /* Responsive */
 @media (max-width: 768px) {
     .logo h1 {
-        font-size: 16px;
+        font-size: 14px;
+    }
+    
+    .logo-pixel {
+        font-size: 30px;
+    }
+    
+    .site-header .container {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .user-email {
+        font-size: 10px;
+        display: none;
     }
     
     .hero .container {
@@ -1233,23 +1247,95 @@ body {
     }
     
     .glitch {
-        font-size: 32px;
+        font-size: 24px;
     }
     
     .hero-subtitle {
-        font-size: 20px;
+        font-size: 18px;
     }
     
     .section-title {
-        font-size: 24px;
+        font-size: 20px;
+    }
+    
+    .page-title {
+        font-size: 28px;
     }
     
     .games-grid {
         grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .game-card {
+        transform: translateZ(0);
+    }
+    
+    .game-card:hover {
+        transform: translateY(-5px) translateZ(10px);
+    }
+    
+    .pixel-btn {
+        font-size: 10px;
+        padding: 10px 18px;
+    }
+    
+    .pixel-btn.large {
+        font-size: 12px;
+        padding: 12px 20px;
     }
     
     .site-footer .container {
         flex-direction: column;
         text-align: center;
+        gap: 20px;
+    }
+    
+    .footer-links {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    /* Leaderboard mobile */
+    .table-header, .table-row {
+        grid-template-columns: 60px 1fr 100px;
+        font-size: 14px;
+        padding: 10px;
+    }
+    
+    .date-col {
+        display: none;
+    }
+    
+    .score-col-wide {
+        grid-column: span 1;
+    }
+    
+    .personal-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .leaderboard-content {
+        padding: 15px;
+    }
+    
+    .tab-btn {
+        font-size: 9px;
+        padding: 10px 15px;
+    }
+    
+    .modal-content {
+        width: 95%;
+        margin: 5% auto;
+    }
+    
+    .modal-header h2 {
+        font-size: 14px;
+    }
+    
+    /* Touch-friendly buttons */
+    button, .pixel-btn, .favorite-btn {
+        min-height: 44px;
+        min-width: 44px;
     }
 }

@@ -44,6 +44,14 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .start-message { font-size: 20px; color: #ffff00; animation: blink 1.5s infinite; margin: 20px 0; }
         @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0.3; } }
+        
+        .mobile-controls { display: none; grid-template-columns: 1fr 1fr 1fr; gap: 10px; max-width: 400px; margin: 20px auto; }
+        .mobile-controls button { padding: 20px; font-size: 20px; background: rgba(0, 255, 255, 0.2); border: 2px solid #00ffff; color: #00ffff; cursor: pointer; }
+        .mobile-controls button:active { background: rgba(0, 255, 255, 0.4); }
+        .mobile-controls .move-left { grid-column: 1; }
+        .mobile-controls .shoot { grid-column: 2; background: rgba(255, 255, 0, 0.2); border-color: #ffff00; color: #ffff00; }
+        .mobile-controls .move-right { grid-column: 3; }
+        @media (max-width: 768px) { .mobile-controls { display: grid; } canvas { max-width: 100%; height: auto; } }
     </style>
 </head>
 <body>
@@ -62,6 +70,11 @@
         <canvas id="gameCanvas" width="600" height="600"></canvas>
         <div id="startMessage" class="start-message">PRESS SPACE OR CLICK START TO BEGIN</div>
         <div class="controls"><span>← →</span> or <span>A D</span> to move | <span>SPACE</span> to shoot</div>
+        <div class="mobile-controls">
+            <button class="move-left" id="btnLeft">◄ LEFT</button>
+            <button class="shoot" id="btnShoot">🔥 SHOOT</button>
+            <button class="move-right" id="btnRight">RIGHT ►</button>
+        </div>
         <div class="buttons">
             <button id="startBtn">START GAME</button>
             <button class="secondary" onclick="window.location.href='games.html'">BACK TO GAMES</button>
@@ -183,6 +196,29 @@
         });
         document.addEventListener('keyup', e => keys[e.key] = false);
         document.getElementById('startBtn').addEventListener('click', init);
+        
+        // Mobile controls
+        const btnLeft = document.getElementById('btnLeft');
+        const btnRight = document.getElementById('btnRight');
+        const btnShoot = document.getElementById('btnShoot');
+        
+        if (btnLeft) {
+            btnLeft.addEventListener('touchstart', () => keys['ArrowLeft'] = true);
+            btnLeft.addEventListener('touchend', () => keys['ArrowLeft'] = false);
+            btnLeft.addEventListener('mousedown', () => keys['ArrowLeft'] = true);
+            btnLeft.addEventListener('mouseup', () => keys['ArrowLeft'] = false);
+        }
+        if (btnRight) {
+            btnRight.addEventListener('touchstart', () => keys['ArrowRight'] = true);
+            btnRight.addEventListener('touchend', () => keys['ArrowRight'] = false);
+            btnRight.addEventListener('mousedown', () => keys['ArrowRight'] = true);
+            btnRight.addEventListener('mouseup', () => keys['ArrowRight'] = false);
+        }
+        if (btnShoot) {
+            btnShoot.addEventListener('click', () => {
+                if (gameRunning) bullets.push({x: player.x + 18, y: player.y});
+            });
+        }
     </script>
 </body>
 </html>

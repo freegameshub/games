@@ -27,6 +27,10 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .start-message { font-size: 20px; color: #ffff00; animation: blink 1.5s infinite; margin: 20px 0; }
         @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0.3; } }
+        .mobile-controls { display: none; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 300px; margin: 20px auto; }
+        .mobile-controls button { padding: 25px; font-size: 24px; background: rgba(0, 255, 255, 0.2); border: 2px solid #00ffff; color: #00ffff; cursor: pointer; }
+        .mobile-controls button:active { background: rgba(0, 255, 255, 0.4); }
+        @media (max-width: 768px) { .mobile-controls { display: grid; } canvas { max-width: 100%; } }
     </style>
 </head>
 <body>
@@ -44,6 +48,7 @@
         </div>
         <canvas id="gameCanvas" width="600" height="600"></canvas>
         <div id="startMessage" class="start-message">PRESS SPACE OR CLICK START TO BEGIN</div>
+        <div class="mobile-controls"><button id="btnLeft">◄ LEFT</button><button id="btnRight">RIGHT ►</button></div>
         <div class="controls"><span>← →</span> or <span>A D</span> to move paddle</div>
         <div class="buttons">
             <button id="startBtn">START GAME</button>
@@ -169,6 +174,10 @@
         
         document.addEventListener('keydown', e => { keys[e.key] = true; if (e.code === 'Space' && !gameRunning) init(); });
         document.addEventListener('keyup', e => keys[e.key] = false);
+        const btnLeft = document.getElementById('btnLeft');
+        const btnRight = document.getElementById('btnRight');
+        if(btnLeft){ btnLeft.addEventListener('touchstart', ()=>keys['ArrowLeft']=true); btnLeft.addEventListener('touchend', ()=>keys['ArrowLeft']=false); }
+        if(btnRight){ btnRight.addEventListener('touchstart', ()=>keys['ArrowRight']=true); btnRight.addEventListener('touchend', ()=>keys['ArrowRight']=false); }
         document.getElementById('startBtn').addEventListener('click', init);
     </script>
 </body>

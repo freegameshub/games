@@ -27,6 +27,10 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .start-message { font-size: 20px; color: #ffff00; animation: blink 1.5s infinite; margin: 20px 0; }
         @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0.3; } }
+        .mobile-controls { display: none; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 300px; margin: 20px auto; }
+        .mobile-controls button { padding: 20px; font-size: 20px; background: rgba(0, 255, 255, 0.2); border: 2px solid #00ffff; color: #00ffff; cursor: pointer; }
+        .mobile-controls button:active { background: rgba(0, 255, 255, 0.4); }
+        @media (max-width: 768px) { .mobile-controls { display: grid; } canvas { max-width: 100%; } }
     </style>
 </head>
 <body>
@@ -44,6 +48,7 @@
         </div>
         <canvas id="gameCanvas" width="300" height="600"></canvas>
         <div id="startMessage" class="start-message">PRESS SPACE OR CLICK START TO BEGIN</div>
+        <div class="mobile-controls"><button id="btnLeft">◄</button><button id="btnRotate">⟳</button><button id="btnRight">►</button><button id="btnDown" style="grid-column: 2;">▼</button></div>
         <div class="controls"><span>← →</span> move | <span>↓</span> drop | <span>↑</span> rotate</div>
         <div class="buttons">
             <button id="startBtn">START GAME</button>
@@ -198,6 +203,10 @@
             else if (e.key === 'ArrowDown') dropPiece();
             else if (e.key === 'ArrowUp') rotate();
         });
+        document.getElementById('btnLeft')?.addEventListener('click', () => { if(piece){piece.x--;if(collision())piece.x++;} });
+        document.getElementById('btnRight')?.addEventListener('click', () => { if(piece){piece.x++;if(collision())piece.x--;} });
+        document.getElementById('btnRotate')?.addEventListener('click', () => { if(piece)rotate(); });
+        document.getElementById('btnDown')?.addEventListener('click', () => { if(gameRunning)dropPiece(); });
         document.getElementById('startBtn').addEventListener('click', init);
     </script>
 </body>

@@ -27,6 +27,10 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .start-message { font-size: 20px; color: #ffff00; animation: blink 1.5s infinite; margin: 20px 0; }
         @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0.3; } }
+        .mobile-controls { display: none; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 300px; margin: 20px auto; }
+        .mobile-controls button { padding: 25px; font-size: 24px; background: rgba(0, 255, 255, 0.2); border: 2px solid #00ffff; color: #00ffff; cursor: pointer; }
+        .mobile-controls button:active { background: rgba(0, 255, 255, 0.4); }
+        @media (max-width: 768px) { .mobile-controls { display: grid; } canvas { max-width: 100%; } }
     </style>
 </head>
 <body>
@@ -44,6 +48,7 @@
         </div>
         <canvas id="gameCanvas" width="600" height="400"></canvas>
         <div id="startMessage" class="start-message">PRESS SPACE OR CLICK START TO BEGIN</div>
+        <div class="mobile-controls"><button id="btnUp">▲ UP</button><button id="btnDown">▼ DOWN</button></div>
         <div class="controls"><span>↑ ↓</span> or <span>W S</span> to move | First to 5 wins!</div>
         <div class="buttons">
             <button id="startBtn">START GAME</button>
@@ -140,6 +145,10 @@
         
         document.addEventListener('keydown', e => { keys[e.key] = true; if (e.code === 'Space' && !gameRunning) init(); });
         document.addEventListener('keyup', e => keys[e.key] = false);
+        const btnUp = document.getElementById('btnUp');
+        const btnDown = document.getElementById('btnDown');
+        if(btnUp){ btnUp.addEventListener('touchstart', ()=>keys['ArrowUp']=true); btnUp.addEventListener('touchend', ()=>keys['ArrowUp']=false); }
+        if(btnDown){ btnDown.addEventListener('touchstart', ()=>keys['ArrowDown']=true); btnDown.addEventListener('touchend', ()=>keys['ArrowDown']=false); }
         document.getElementById('startBtn').addEventListener('click', init);
     </script>
 </body>
