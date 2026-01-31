@@ -194,12 +194,11 @@ async function loadWeeklyLeaderboard(gameId) {
         
         const weekStart = Timestamp.fromDate(monday);
         
+        // Simplified query - just get by game and timestamp, sort in memory
         const q = query(
             collection(db, 'scores'),
             where('gameId', '==', gameId),
             where('timestamp', '>=', weekStart),
-            orderBy('timestamp', 'desc'),
-            orderBy('score', 'desc'),
             limit(100)
         );
         
@@ -210,17 +209,20 @@ async function loadWeeklyLeaderboard(gameId) {
             return;
         }
         
-        // Sort by score in memory (since we can only orderBy one field with inequality)
+        // Sort by score in memory
         const scores = [];
         querySnapshot.forEach((doc) => {
             scores.push({ id: doc.id, ...doc.data() });
         });
         scores.sort((a, b) => b.score - a.score);
         
+        // Take top 100
+        const topScores = scores.slice(0, 100);
+        
         let rank = 1;
         const rows = [];
         
-        scores.forEach((data) => {
+        topScores.forEach((data) => {
             const date = new Date(data.createdAt).toLocaleDateString();
             const isCurrentUser = currentUser && data.userId === currentUser.uid;
             
