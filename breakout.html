@@ -58,6 +58,7 @@
     </div>
     <script type="module">
         import './game-score-helper.js';
+        import './coin-system.js';
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const scoreEl = document.getElementById('score');
@@ -163,12 +164,28 @@
             });
         }
         
+        function showCoinReward(coins, newBalance) {
+            const popup = document.createElement("div");
+            popup.className = "coin-reward-popup show";
+            popup.innerHTML = `<div class="coin-burst">💰</div><h3>+${coins} COINS!</h3><p>New Balance: ${newBalance.toLocaleString()}</p>`;
+            document.body.appendChild(popup);
+            setTimeout(() => { popup.style.animation = "popOut 0.3s ease forwards"; setTimeout(() => popup.remove(), 300); }, 2000);
+        }
+
         async function endGame(won) {
             gameRunning = false;
             resultTitleEl.textContent = won ? 'YOU WIN! 🏆' : 'GAME OVER!';
             finalScoreEl.textContent = score;
             scoreMessageEl.textContent = won ? 'All bricks cleared!' : 'Try again!';
             gameOverEl.classList.add('show');
+            if (score > 0 && window.CoinSystem && window.PixelArcade) {
+                const user = await window.PixelArcade.getCurrentUser();
+                if (user) {
+                    const result = await window.CoinSystem.awardCoins(user.uid, "breakout", score);
+                    if (result.success) showCoinReward(result.coinsEarned, result.newBalance);
+                }
+            }
+
             if (score > 0 && window.PixelArcade) await window.PixelArcade.submitScore('breakout', score);
         }
         

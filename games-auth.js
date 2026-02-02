@@ -49,6 +49,24 @@ async function handleLogout() {
     }
 }
 
+// Load and display coin balance
+async function loadCoinBalance(userId) {
+    if (!window.CoinSystem) {
+        console.log('CoinSystem not loaded yet');
+        return;
+    }
+    
+    try {
+        const balance = await window.CoinSystem.getUserBalance(userId);
+        const coinBalanceEl = document.getElementById('coinBalance');
+        if (coinBalanceEl) {
+            coinBalanceEl.textContent = balance.toLocaleString();
+        }
+    } catch (error) {
+        console.error('Error loading coin balance:', error);
+    }
+}
+
 // ============================================
 // UI UPDATES BASED ON AUTH STATE
 // ============================================
@@ -59,6 +77,7 @@ function updateUIForUser(user) {
         userSection.innerHTML = `
             <div class="user-profile">
                 <a href="favorites.html" class="pixel-btn small" style="margin-right: 10px; text-decoration: none;">FAVORITES</a>
+                <a href="leaderboard.html" class="pixel-btn small" style="margin-right: 10px; text-decoration: none;">SCORES</a>
                 <span class="user-email">PLAYER: ${userEmail.toUpperCase()}</span>
                 <button id="logoutBtn" class="pixel-btn">LOGOUT</button>
             </div>
@@ -67,18 +86,40 @@ function updateUIForUser(user) {
         // Add logout listener
         document.getElementById('logoutBtn').addEventListener('click', handleLogout);
         
+        // Show coin display and load balance
+        const coinDisplay = document.getElementById('coinDisplay');
+        if (coinDisplay) {
+            coinDisplay.style.display = 'flex';
+            
+            // Wait for CoinSystem to load
+            const checkCoinSystem = setInterval(() => {
+                if (window.CoinSystem) {
+                    clearInterval(checkCoinSystem);
+                    window.CoinSystem.initializeUser(user.uid, user.email);
+                    loadCoinBalance(user.uid);
+                }
+            }, 100);
+            
+            // Timeout after 3 seconds
+            setTimeout(() => clearInterval(checkCoinSystem), 3000);
+        }
+        
         // Load user's favorites to highlight them
         loadUserFavorites(user.uid);
     } else {
-        // User is logged out - redirect to home for login
+        // User is logged out
         userSection.innerHTML = `
             <button class="pixel-btn" onclick="window.location.href='index.html'">LOGIN</button>
         `;
+        
+        // Hide coin display
+        const coinDisplay = document.getElementById('coinDisplay');
+        if (coinDisplay) coinDisplay.style.display = 'none';
     }
 }
 
 // ============================================
-// FAVORITES FUNCTIONS
+// FAVORITES SYSTEM
 // ============================================
 async function loadUserFavorites(userId) {
     try {
@@ -89,13 +130,14 @@ async function loadUserFavorites(userId) {
             const favorites = favoritesSnap.data().games || [];
             const favoriteIds = favorites.map(game => game.id);
             
-            // Highlight favorite buttons
+            // Highlight favorited games
             document.querySelectorAll('.favorite-btn').forEach(btn => {
                 const gameCard = btn.closest('.game-card');
-                const gameId = gameCard.getAttribute('data-game-id');
-                
-                if (favoriteIds.includes(gameId)) {
-                    btn.classList.add('active');
+                if (gameCard) {
+                    const gameId = gameCard.getAttribute('data-game-id');
+                    if (favoriteIds.includes(gameId)) {
+                        btn.classList.add('active');
+                    }
                 }
             });
         }
@@ -104,7 +146,7 @@ async function loadUserFavorites(userId) {
     }
 }
 
-async function toggleFavorite(gameId, title, category, description) {
+async function toggleFavorite(gameId, gameTitle, gameCategory, gameDesc) {
     const user = auth.currentUser;
     if (!user) {
         alert('Please log in to add favorites!');
@@ -120,7 +162,6 @@ async function toggleFavorite(gameId, title, category, description) {
             favorites = favoritesSnap.data().games || [];
         }
         
-        // Check if already favorited
         const existingIndex = favorites.findIndex(game => game.id === gameId);
         
         if (existingIndex > -1) {
@@ -130,18 +171,17 @@ async function toggleFavorite(gameId, title, category, description) {
             // Add to favorites
             favorites.push({
                 id: gameId,
-                title: title,
-                category: category,
-                description: description,
+                title: gameTitle,
+                category: gameCategory,
+                description: gameDesc,
                 addedAt: new Date().toISOString()
             });
         }
         
-        // Save to Firestore
         await setDoc(favoritesRef, { games: favorites });
         
-        // Update button state
-        const btn = document.querySelector(`[data-game-id="${gameId}"] .favorite-btn`);
+        // Update UI
+        const btn = document.querySelector(`.game-card[data-game-id="${gameId}"] .favorite-btn`);
         if (btn) {
             btn.classList.toggle('active');
         }
@@ -152,79 +192,35 @@ async function toggleFavorite(gameId, title, category, description) {
     }
 }
 
+// Make toggleFavorite available globally
+window.toggleFavorite = toggleFavorite;
+
 // ============================================
 // AUTH STATE OBSERVER
 // ============================================
 onAuthStateChanged(auth, (user) => {
     updateUIForUser(user);
-    
-    if (user) {
-        console.log('User logged in:', user.email);
-    } else {
-        console.log('User logged out');
-    }
 });
 
 // ============================================
-// MODAL EVENT LISTENERS
+// FAVORITE BUTTON EVENT LISTENERS
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
-    // About, Contact, Privacy modals
-    const aboutLink = document.getElementById('aboutLink');
-    const contactLink = document.getElementById('contactLink');
-    const privacyLink = document.getElementById('privacyLink');
-    const aboutModal = document.getElementById('aboutModal');
-    const contactModal = document.getElementById('contactModal');
-    const privacyModal = document.getElementById('privacyModal');
-
-    if (aboutLink) {
-        aboutLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            aboutModal.style.display = 'block';
-        });
-    }
-
-    if (contactLink) {
-        contactLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            contactModal.style.display = 'block';
-        });
-    }
-
-    if (privacyLink) {
-        privacyLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            privacyModal.style.display = 'block';
-        });
-    }
-
-    // Close buttons for all modals
-    document.querySelectorAll('.close').forEach(closeBtn => {
-        closeBtn.addEventListener('click', function() {
-            const modalId = this.getAttribute('data-modal');
-            if (modalId) {
-                document.getElementById(modalId).style.display = 'none';
-            }
-        });
-    });
-
-    // Close modal when clicking outside
-    window.addEventListener('click', (e) => {
-        if (e.target.classList.contains('modal')) {
-            e.target.style.display = 'none';
-        }
-    });
-    
-    // Favorite buttons
+    // Add event listeners to all favorite buttons
     document.querySelectorAll('.favorite-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const gameCard = this.closest('.game-card');
-            const gameId = gameCard.getAttribute('data-game-id');
-            const title = this.getAttribute('data-game-title');
-            const category = this.getAttribute('data-game-category');
-            const description = this.getAttribute('data-game-desc');
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
             
-            toggleFavorite(gameId, title, category, description);
+            const gameCard = this.closest('.game-card');
+            if (!gameCard) return;
+            
+            const gameId = gameCard.getAttribute('data-game-id');
+            const gameTitle = this.getAttribute('data-game-title');
+            const gameCategory = this.getAttribute('data-game-category');
+            const gameDesc = this.getAttribute('data-game-desc');
+            
+            toggleFavorite(gameId, gameTitle, gameCategory, gameDesc);
         });
     });
 });

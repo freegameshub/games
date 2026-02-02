@@ -21,6 +21,10 @@
                 <div id="userSection">
                     <button id="loginModalBtn" class="pixel-btn">LOGIN</button>
                 </div>
+                <div class="coin-display" id="coinDisplay" style="display: none;">
+                    <span class="coin-icon">🪙</span>
+                    <span class="coin-amount" id="coinBalance">0</span>
+                </div>
             </nav>
         </div>
     </header>
@@ -242,6 +246,7 @@
     </footer>
 
     <!-- Firebase SDKs -->
+    <script type="module" src="coin-system.js"></script>
     <script type="module" src="games-auth.js"></script>
 </body>
 </html>
