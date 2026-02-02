@@ -918,11 +918,22 @@ body {
     gap: 8px;
     align-items: center;
     flex-wrap: wrap;
+    position: relative;
+    z-index: 10;
 }
 
 .game-actions .pixel-btn {
     flex: 1;
     min-width: 70px;
+    position: relative;
+    z-index: 11;
+    pointer-events: auto;
+}
+
+.favorite-btn {
+    position: relative;
+    z-index: 11;
+    pointer-events: auto;
 }
 
 .game-category {

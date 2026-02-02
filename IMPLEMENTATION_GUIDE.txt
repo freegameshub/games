@@ -1,0 +1,102 @@
+PIXEL ARCADE COIN SYSTEM - QUICK START GUIDE
+=============================================
+
+FILES CREATED:
+1. coin-system.js - Complete coin system logic
+2. COIN_SYSTEM_COMPLETE.md - Full specification
+3. BUG_FIXES.md - Documented fixes needed
+
+PRIORITY FIXES TO APPLY:
+
+1. FIX GAME BUTTONS (CRITICAL)
+   ✓ Already applied to styles.css - buttons now clickable
+
+2. FIX FAVORITES PAGE
+   In favorites.js line 87, change to:
+   ```javascript
+   if (favorites.length === 0) {
+       emptyMessage.style.display = 'block';
+       favoritesGrid.innerHTML = '';
+   } else {
+       emptyMessage.style.display = 'none';
+       // render games...
+   }
+   ```
+
+3. FIX LOGIN MODAL
+   In app.js, create separate functions for login vs signup
+
+COIN SYSTEM INTEGRATION (5 STEPS):
+
+STEP 1: Add coin display to header (ALL pages)
+```html
+<div class="coin-display">
+    <span class="coin-icon">🪙</span>
+    <span id="coinBalance">1000</span>
+</div>
+```
+
+STEP 2: Import coin system in game files
+```html
+<script type="module" src="coin-system.js"></script>
+```
+
+STEP 3: Award coins when game ends
+```javascript
+// In endGame() function
+if (window.CoinSystem) {
+    const result = await window.CoinSystem.awardCoins(userId, 'snake', score);
+    if (result.success) {
+        showCoinReward(result.coinsEarned, result.newBalance);
+    }
+}
+```
+
+STEP 4: Initialize user on signup
+```javascript
+// In app.js after createUserWithEmailAndPassword
+await window.CoinSystem.initializeUser(user.uid, user.email);
+```
+
+STEP 5: Display balance on page load
+```javascript
+// In auth state observer
+const balance = await window.CoinSystem.getUserBalance(user.uid);
+document.getElementById('coinBalance').textContent = balance;
+```
+
+CSS FOR COINS (add to styles.css):
+```css
+.coin-display {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.3));
+    border: 2px solid #ffd700;
+    padding: 8px 16px;
+    margin-left: 15px;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+}
+
+.coin-icon { font-size: 20px; }
+
+.coin-display span {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 14px;
+    color: #ffd700;
+    text-shadow: 0 0 10px #ffd700;
+}
+```
+
+FIRESTORE SETUP:
+1. Collections will auto-create on first write
+2. No manual setup needed
+3. Indexes may be suggested - click links to create
+
+TESTING:
+1. Play a game
+2. Check console for coin award
+3. Refresh page - balance should persist
+4. Play 10+ games - should hit daily limit
+
+SEE COIN_SYSTEM_COMPLETE.md FOR FULL DETAILS
